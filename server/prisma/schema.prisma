@@ -17,17 +17,27 @@ model User {
 model Goal {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
   title       String
   description String
-  status      String   @default("not-started")
+  statusId    Int      @default(1)
+  status      Status   @relation(fields: [statusId], references: [id])
   targetDate  DateTime @default(now())
+  tasks       Task[]
+}
+
+model Task {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+  statusId    Int    @default(1)
+  status      Status @relation(fields: [statusId], references: [id])
+  goalId      Int
+  goal        Goal   @relation(fields: [goalId], references: [id], onDelete: Cascade)
 }
 
 model Post {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   title     String
   content   String?
   published Boolean  @default(false)
@@ -35,3 +45,11 @@ model Post {
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
 }
+
+model Status {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  goals Goal[]
+  tasks Task[]
+}
+

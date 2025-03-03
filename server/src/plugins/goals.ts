@@ -7,6 +7,7 @@ import Hapi from "@hapi/hapi";
 // import { PostGetPayload } from '@prisma/client'
 
 // plugin to instantiate Prisma Client
+console.log("goals.ts");
 const goalsPlugin = {
   name: "app/goals",
   dependencies: ["prisma"],
@@ -73,9 +74,11 @@ async function feedHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
     const goals = await prisma.goal.findMany({
       take: Number(take) || undefined,
       skip: Number(skip) || undefined,
-      orderBy: {
-        updatedAt: orderBy || undefined,
-      },
+      orderBy: [
+        {
+          targetDate: "asc",
+        },
+      ],
     });
 
     return h.response(goals).code(200);
@@ -92,10 +95,53 @@ async function getGoalHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
   try {
     const goal = await prisma.goal.findUnique({
       where: { id: goalId },
+      include: {
+        tasks: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            status: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        status: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
-    return h.response(goal || undefined).code(200);
+
+    if (!goal) {
+      return h
+        .response({
+          error: `Goal with ID ${goalId} does not exist in the database`,
+        })
+        .code(404);
+    }
+
+    // Transform the goal object to replace statusId with status name
+    const transformedGoal = {
+      ...goal,
+      status: goal.status.name,
+      tasks: goal.tasks.map((task) => ({
+        ...task,
+        status: task.status.name,
+      })),
+    };
+
+    return h.response(transformedGoal).code(200);
   } catch (err) {
     console.log(err);
+    return h
+      .response({
+        error: `Goal with ID ${goalId} does not exist in the database`,
+      })
+      .code(404);
   }
 }
 
@@ -131,18 +177,24 @@ async function deleteGoalHandler(
   h: Hapi.ResponseToolkit,
 ) {
   const { prisma } = request.server.app;
-
   const goalId = Number(request.params.goalId);
 
   try {
+    // Delete related tasks first
+    await prisma.task.deleteMany({
+      where: { goalId: goalId },
+    });
+
+    // Then delete the goal
     const goal = await prisma.goal.delete({
       where: { id: goalId },
     });
+
     return h.response(goal || undefined).code(201);
   } catch (err) {
     console.log(err);
     return h.response({
-      error: `Goal with ID ${goalId} does not exist in the database`,
+      error: `Goal with ID ${goalId} does not exist in the database or cannot be deleted`,
     });
   }
 }
@@ -154,7 +206,7 @@ async function createGoalHandler(
   const { prisma } = request.server.app;
 
   const payload = request.payload as any;
-
+  console.log(payload);
   try {
     const createdGoal = await prisma.goal.create({
       data: {
@@ -162,10 +214,20 @@ async function createGoalHandler(
         description: payload.description,
         status: payload.status,
         targetDate: payload.targetDate,
+        tasks: payload.tasks
+          ? {
+              create: payload.tasks.map((task: any) => ({
+                title: task.title,
+                description: task.description,
+                status: task.status,
+              })),
+            }
+          : undefined,
       },
     });
     return h.response(createdGoal).code(201);
   } catch (err) {
     console.log(err);
+    return h.response({ error: "Failed to create goal" }).code(500);
   }
 }

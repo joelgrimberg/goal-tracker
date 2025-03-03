@@ -7,6 +7,9 @@ import goals from "./plugins/goals";
 const server: Hapi.Server = Hapi.server({
   port: process.env.PORT || 3000,
   host: process.env.HOST || "localhost",
+  routes: {
+    cors: true,
+  },
 });
 
 export async function start(): Promise<Hapi.Server> {

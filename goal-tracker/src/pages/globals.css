@@ -1,0 +1,328 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  filter: blur(100px);
+}
+
+#container {
+  font-family:
+    Inter, Roboto, "Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial,
+    sans-serif;
+  height: 100%;
+}
+
+main {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#hero {
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px;
+}
+
+h1 {
+  font-size: 22px;
+  margin-top: 0.25em;
+}
+
+#links,
+h1 {
+  display: flex;
+  gap: 16px;
+}
+
+#links a,
+h1 a {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  color: #111827;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+/* Add this to your CSS file or within a <style> tag */
+.hover-bold:hover {
+  font-weight: #8b50e6;
+  background: #5d27f9; /* Light pink background color */
+}
+
+#links a:hover {
+  color: rgb(78, 80, 86);
+}
+
+#links a svg {
+  height: 1em;
+  margin-left: 8px;
+}
+
+#links a.button,
+h1 a.button {
+  color: white;
+  background: linear-gradient(83.21deg, #3245ff 0%, #bc52ee 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.24);
+  border-radius: 10px;
+}
+
+#links a.button:hover {
+  color: rgb(230, 230, 230);
+  box-shadow: none;
+}
+
+pre {
+  font-family:
+    ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
+    "DejaVu Sans Mono", monospace;
+  font-weight: normal;
+  background: linear-gradient(14deg, #d83333 0%, #f041ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+h2 {
+  margin: 0 0 1em;
+  font-weight: normal;
+  color: #111827;
+  font-size: 20px;
+}
+
+p {
+  color: #4b5563;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -0.006em;
+  margin: 0;
+}
+
+code {
+  display: inline-block;
+  background:
+    linear-gradient(66.77deg, #f3cddd 0%, #f5cee7 100%) padding-box,
+    linear-gradient(155deg, #d83333 0%, #f041ff 18%, #f5cee7 45%) border-box;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 6px 8px;
+}
+
+.box {
+  padding: 16px;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 16px;
+  border: 1px solid white;
+}
+
+#news {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  max-width: 300px;
+  text-decoration: none;
+  transition: background 0.2s;
+  backdrop-filter: blur(50px);
+}
+
+#news:hover {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+@media screen and (max-height: 368px) {
+  #news {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #hero {
+    display: block;
+    padding-top: 10%;
+  }
+
+  #links {
+    flex-wrap: wrap;
+  }
+
+  #links a.button {
+    padding: 14px 18px;
+  }
+
+  #news {
+    right: 16px;
+    left: 16px;
+    bottom: 2.5rem;
+    max-width: 100%;
+  }
+
+  h1 {
+    line-height: 1.5;
+  }
+}
+
+.table-width {
+  width: 800px;
+  border-collapse: collapse; /* Ensure borders are collapsed */
+}
+
+/* Ensure table cells break content nicely and add ellipsis */
+table td {
+  max-width: 40ch; /* Set maximum width to 40 characters */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.break-word {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 40ch; /* Adjust the max-width as needed */
+}
+
+.fixed-width-600 {
+  width: 600px; /* Set the width as needed */
+  text-align: left; /* Center the text */
+}
+
+.fixed-width-130 {
+  width: 150px; /* Set the width as needed */
+}
+
+/* Default table cell font color */
+.table-width td {
+  color: #cccccc; /* Grayish color */
+  transition: color 0.3s ease; /* Smooth transition */
+}
+
+/* Table cell font color on hover */
+.table-width tr:hover td {
+  color: #ffffff; /* Pure white color */
+  cursor: pointer;
+}
+/* Make the text bold on hover without changing the cell width */
+table td:hover {
+  background: #5d27f9; /* Light pink background color */
+}
+
+table td {
+  width: 170px; /* Adjust the width as needed */
+  box-sizing: border-box;
+}
+table td.info-box {
+  vertical-align: top;
+}
+
+/* Default table cell font color */
+.table-width td {
+  color: #cccccc; /* Grayish color */
+  transition: color 0.3s ease; /* Smooth transition */
+}
+
+/* Remove hover effect on table rows */
+.table-width tr:hover td {
+  color: inherit; /* Inherit the default color */
+}
+
+/* Highlighted row font color */
+.table-width tr.highlight td {
+  color: #ffffff; /* Pure white color */
+}
+
+/* Highlighted row background color */
+.highlight {
+  background-color: #5d27f9; /* Change to your desired highlight color */
+}
+/* Default table cell font color */
+.table-width td {
+  color: #cccccc; /* Grayish color */
+  transition: color 0.3s ease; /* Smooth transition */
+}
+
+/* Remove hover effect on table rows */
+.table-width tr:hover td {
+  color: inherit; /* Inherit the default color */
+  background-color: inherit; /* Inherit the default background color */
+}
+
+/* Highlighted row font color */
+.table-width tr.highlight td {
+  color: #ffffff; /* Pure white color */
+}
+
+tbody {
+  border: 1px solid #ff69b4; /* Pink border for the table */
+  border-collapse: collapse; /* Ensure borders do not double up */
+}
+
+/* Highlighted row background color */
+.highlight {
+  background-color: #5d27f9; /* Change to your desired highlight color */
+}
+
+.highlight tr {
+  border: 1px dashed green; /* Bubblegum pink color */
+}
+
+table {
+  border-radius: 20px; /* Adjust the value as needed */
+  overflow: hidden; /* Ensure the rounded corners are visible */
+}
+
+.blue-arrow {
+  color: darkblue;
+}
+
+.small-cell-10 {
+  width: 10px;
+}
+
+table td,
+table th {
+  text-align: left;
+}
+thead {
+  font-weight: normal;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: -0.006em;
+  margin: 0;
+}

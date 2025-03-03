@@ -1,0 +1,96 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
+
+const fetcher = (url) => fetch(url).then((r) => r.json());
+
+export default function GoalDetails() {
+  // const router = useRouter();
+  // const { goalId } = router.query;
+  // const [goal, setGoal] = useState(null);
+  //
+  // useEffect(() => {
+  //   if (goalId) {
+  //     const { data, error, isLoading } = useSWR(
+  //       `/api/goals/${goalId}`,
+  //       fetcher,
+  //     );
+  //   }
+  // }, [goalId]);
+
+  return (
+    <div>
+      <main>
+        <img
+          id="background"
+          src="../../../../public/background.svg"
+          alt=""
+          fetchPriority="high"
+        />
+        <section id="hero">
+          <table className="table-width">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>ID</td>
+                <td>{goal.id}</td>
+              </tr>
+              <tr>
+                <td>Created At</td>
+                <td>{new Date(goal.createdAt).toLocaleString()}</td>
+              </tr>
+              <tr>
+                <td>Title</td>
+                <td>{goal.title}</td>
+              </tr>
+              <tr>
+                <td>Description</td>
+                <td>{goal.description}</td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>{goal.status}</td>
+              </tr>
+              <tr>
+                <td>Target Date</td>
+                <td>{new Date(goal.targetDate).toLocaleDateString()}</td>
+              </tr>
+              <tr>
+                <td>Tasks</td>
+                <td>
+                  <table className="table-width">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {goal.tasks.map((task) => (
+                        <tr key={task.id}>
+                          <td>{task.id}</td>
+                          <td>{task.title}</td>
+                          <td>{task.description}</td>
+                          <td>{task.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+  );
+}
