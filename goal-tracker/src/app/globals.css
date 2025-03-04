@@ -271,8 +271,8 @@ table td {
 
 /* Default table cell font color */
 .table-width td {
-  color: #cccccc; /* Grayish color */
-  transition: color 0.3s ease; /* Smooth transition */
+  color: #000000; /* Grayish color */
+  transition: color 0.1 ease; /* Smooth transition */
 }
 
 /* Table cell font color on hover */
@@ -369,4 +369,8 @@ thead {
   line-height: 24px;
   letter-spacing: -0.006em;
   margin: 0;
+}
+input,
+textarea {
+  color: #000000; /* Change to your desired text color */
 }

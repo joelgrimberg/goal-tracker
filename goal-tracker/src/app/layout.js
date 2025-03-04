@@ -23,7 +23,12 @@ export default function RootLayout({ children }) {
         data-cy="app"
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <img id="background" src="background.svg" alt="" fetchPriority="high" />
+        <img
+          id="background"
+          src="/background.svg"
+          alt=""
+          fetchPriority="high"
+        />
 
         {children}
       </body>

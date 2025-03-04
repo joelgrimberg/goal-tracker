@@ -40,7 +40,7 @@ export default function Home() {
     const handleKeyDown = (event) => {
       if (event.key === "Enter") {
         window.location.href =
-          "http://localhost:3001/goal/edit/" + data[selectedRow].id;
+          "http://localhost:3001/goal/edit?id=" + data[selectedRow].id;
       } else if (event.key === "ArrowDown" || event.key === "j") {
         setSelectedRow((prev) => (prev < data.length - 1 ? prev + 1 : 0));
         setHoverText(""); // Clear the hover text
@@ -89,7 +89,12 @@ export default function Home() {
   return (
     <div>
       <main>
-        <img id="background" src="background.svg" alt="" fetchPriority="high" />
+        <img
+          id="background"
+          src="/background.svg"
+          alt=""
+          fetchPriority="high"
+        />
         <section id="hero">
           <table className="table-width">
             <thead>
