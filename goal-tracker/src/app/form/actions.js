@@ -2,8 +2,8 @@
 
 import { redirect } from "next/navigation";
 
-export async function createGoal(prevState, formData) {
-  console.log(formData);
+export async function editGoal(prevState, formData) {
+  console.log("some log");
   console.log(formData.get("goal"));
   console.log(formData.get("description"));
 
@@ -11,7 +11,6 @@ export async function createGoal(prevState, formData) {
     method: "POST",
     headers: {
       Accept: "application/json",
-
       "Content-Type": "application/json",
     },
     body: {
@@ -24,9 +23,9 @@ export async function createGoal(prevState, formData) {
   const res = await fetch("http://localhost:3000/goal", settings);
   const json = await res.json();
   console.log(res);
-  // if (!res.ok) {
-  //   return { message: "Please enter a valid email" };
-  // }
+  if (!res.ok) {
+    return { message: "Please enter a valid email" };
+  }
 
-  // redirect("/dashboard");
+  redirect("/dashboard");
 }

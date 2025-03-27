@@ -249,7 +249,7 @@ code {
 table td {
   max-width: 40ch; /* Set maximum width to 40 characters */
   overflow: hidden;
-  text-overflow: ellipsis;
+  /*text-overflow: ellipsis;*/
   white-space: nowrap;
 }
 
@@ -346,16 +346,7 @@ tbody {
 }
 
 table {
-  border-radius: 20px; /* Adjust the value as needed */
   overflow: hidden; /* Ensure the rounded corners are visible */
-}
-
-.blue-arrow {
-  color: darkblue;
-}
-
-.small-cell-10 {
-  width: 10px;
 }
 
 table td,
@@ -372,5 +363,31 @@ thead {
 }
 input,
 textarea {
-  color: #000000; /* Change to your desired text color */
+  width: 100%; /* Set the desired width, e.g., 100% */
+
+  color: rgba(255, 255, 255, 0.5); /* White text color with 50% opacity */
+  background-color: rgba(255, 255, 255, 0.12);
+  outline: none; /* Optional: Remove the default outline */
+  border: 1px solid rgba(255, 255, 255, 0.32);
+}
+input:focus,
+textarea:focus {
+  outline: none; /* Optional: Remove the default outline */
+  border-color: transparent;
+  border: 1px solid #5d27f9;
+  color: rgba(255, 255, 255, 0.8); /* White text color with 50% opacity */
+}
+
+.task-divider {
+  border: none;
+  height: 1px; /* Adjust the height as needed */
+  background: repeating-linear-gradient(
+    to right,
+    #ccc,
+    #ccc 5px,
+    transparent 5px,
+    transparent 10px
+  );
+  width: 75%; /* Set the width to 75% */
+  margin: 20px auto; /* Center align the divider */
 }
