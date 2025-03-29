@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 import { updateGoal } from "./actions";
@@ -10,6 +10,9 @@ const initialState = {
 
 export default function GoalDetails() {
   // const [state, pending] = useActionState(updateGoal, initialState);
+  //
+  //
+  const formRef = useRef(null);
 
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
@@ -44,6 +47,26 @@ export default function GoalDetails() {
     fetchData();
   }, [id]);
 
+  // Add event listener for Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        router.push("/");
+      } else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+        // Ctrl+Enter or Cmd+Enter (for Mac)
+        e.preventDefault();
+        if (formRef.current) {
+          formRef.current.requestSubmit();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [router]);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -60,11 +83,22 @@ export default function GoalDetails() {
     router.push("/");
   };
 
+  // Form submission handler
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await updateGoal(data);
+      router.push("/");
+    } catch (error) {
+      console.error("Error updating goal:", error);
+    }
+  };
+
   return (
     <div>
       <main>
         <section id="hero">
-          <form action={updateGoal}>
+          <form action={updateGoal} onSubmit={handleSubmit} ref={formRef}>
             <table className="table-width">
               <tbody>
                 <tr>
@@ -214,6 +248,17 @@ export default function GoalDetails() {
                   </td>
                 </tr>
               </tbody>
+              <tfoot>
+                <tr>
+                  <td className="info-box">
+                    <p>
+                      <kbd>esc</kbd> back
+                      <br />
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+              </tfoot>
             </table>
           </form>
         </section>

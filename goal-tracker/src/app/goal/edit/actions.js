@@ -15,13 +15,4 @@ export async function updateGoal(formData) {
       status: formData.get("status"),
     },
   };
-
-  // const res = await fetch("http://localhost:3000/goal", settings);
-  // const json = await res.json();
-  // console.log(res);
-  // if (!res.ok) {
-  //   return { message: "Please enter a valid email" };
-  // }
-  //
-  // redirect("/dashboard");
 }

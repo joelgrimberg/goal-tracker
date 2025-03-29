@@ -20,7 +20,20 @@ export default function Todos() {
   };
 
   useEffect(() => {
-    navigator.getBattery().then((battery) => {
+    const handleKeyDown = (event) => {
+      if (event.key === "g") {
+        setIsUpperBoxExpanded(!isUpperBoxExpanded);
+        setIsLowerBoxExpanded(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+
+    navigator.getBattery()?.then((battery) => {
       function updateAllBatteryInfo() {
         updateChargeInfo();
         updateLevelInfo();
@@ -47,7 +60,7 @@ export default function Todos() {
         setBatteryIconColor(roundedLevel < 20 ? "red" : "green");
       }
     });
-  }, []);
+  }, [isUpperBoxExpanded, isLowerBoxExpanded]);
 
   return (
     <div>

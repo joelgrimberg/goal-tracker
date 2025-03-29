@@ -3,15 +3,14 @@
 import { redirect } from "next/navigation";
 
 export async function createGoal(prevState, formData) {
-  console.log(formData);
-  console.log(formData.get("goal"));
+  // console.log(formData);
+  // console.log(formData.get("goal"));
   console.log(formData.get("description"));
 
   const settings = {
     method: "POST",
     headers: {
       Accept: "application/json",
-
       "Content-Type": "application/json",
     },
     body: {

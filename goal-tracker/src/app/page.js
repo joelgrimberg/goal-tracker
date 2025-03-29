@@ -1,6 +1,7 @@
 "use client";
 import useSWR from "swr";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import Todos from "./components/todos";
 
 const fetcher = (url) => fetch(url).then((r) => r.json());
@@ -12,6 +13,9 @@ export default function Home() {
   );
   const [selectedRow, setSelectedRow] = useState(-1);
   const [hoverText, setHoverText] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const videoRef = useRef(null);
 
   const handleDelete = async () => {
     const confirmed = window.confirm(
@@ -36,9 +40,23 @@ export default function Home() {
     }
   };
 
+  // Toggle video playback
+  const toggleVideo = () => {
+    if (videoRef.current) {
+      if (isVideoPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsVideoPlaying(!isVideoPlaying);
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === "Enter") {
+      if (!data) return;
+
+      if ((event.key === "Enter" || event.key === "e") && selectedRow !== -1) {
         window.location.href =
           "http://localhost:3001/goal/edit?id=" + data[selectedRow].id;
       } else if (event.key === "ArrowDown" || event.key === "j") {
@@ -53,11 +71,17 @@ export default function Home() {
         setHoverText(""); // Clear the hover text
       } else if (event.key === "i" && selectedRow !== -1) {
         setHoverText((prev) => (prev ? "" : data[selectedRow].description));
+      }
+      if (event.key === "m") {
+        setShowModal(true);
       } else if (event.key === "Escape") {
-        setSelectedRow(-1); // Reset the selected row
-        setHoverText(""); // Remove the hover text
+        setSelectedRow(-1);
+        setHoverText("");
+        setShowModal(false); // Also close the modal on Escape
       } else if (event.key === "t" && selectedRow !== -1) {
         handleDelete(selectedRow);
+      } else if (event.key === "v") {
+        toggleVideo();
       }
     };
 
@@ -65,13 +89,7 @@ export default function Home() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [data, selectedRow]);
-
-  const handleRowClick = (index, goalId) => {
-    setSelectedRow(index);
-    window.location.href = "http://localhost:3000/goal/" + goalId;
-    // setHoverText(data[index].description);
-  };
+  }, [data, selectedRow, isVideoPlaying]);
 
   const handleRowHover = (index) => {
     setSelectedRow(index);
@@ -88,6 +106,59 @@ export default function Home() {
 
   return (
     <div>
+      {/* Background video with better blending */}
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        id="background-video"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: "-2", // Behind overlay
+        }}
+      >
+        <source src="/video.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+
+      {/* Video status indicator */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: "10px",
+          right: "10px",
+          background: "rgba(0,0,0,0.5)",
+          color: "white",
+          padding: "5px 10px",
+          borderRadius: "3px",
+          fontSize: "12px",
+          opacity: 0.7,
+          zIndex: 1,
+        }}
+      >
+        Video: {isVideoPlaying ? "Playing" : "Paused"} (Press 'v' to toggle)
+      </div>
+
+      {/* Overlay to blend video with background */}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0,0,0,0.85)", // Darker overlay for more subtle video
+          backdropFilter: "blur(3px)", // Add blur effect
+          zIndex: "-1",
+        }}
+      />
+
       <main>
         <img
           id="background"
@@ -112,10 +183,17 @@ export default function Home() {
                 <tr
                   key={goal.id}
                   className={selectedRow === index ? "highlight" : ""}
-                  onClick={() => handleRowClick(index, goal.id)}
                   onMouseEnter={() => handleRowHover(index)}
                 >
-                  <td className="break-word fixed-width-600">{goal.title}</td>
+                  <td className="break-word fixed-width-600">
+                    <a
+                      href={`http://localhost:3000/goal/${goal.id}`}
+                      data-cy={`goal-link-${goal.id}`}
+                      className="goal-link"
+                    >
+                      {goal.title}
+                    </a>
+                  </td>
                   <td className="break-word">{goal.status}</td>
                   <td className="break-word">
                     {goal.targetDate.split("T")[0]}
@@ -140,7 +218,8 @@ export default function Home() {
                 </td>
                 <td className="info-box">
                   <p>
-                    <kbd>i</kbd> info <br />
+                    <kbd>i</kbd> info [todo]
+                    <br />
                     <kbd>e</kbd> edit [todo] <br />
                     <kbd>t</kbd> trash
                     <br />
@@ -148,7 +227,7 @@ export default function Home() {
                 </td>
                 <td className="info-box">
                   <p>
-                    <kbd>g</kbd> add goal [todo]
+                    <kbd>a</kbd> add goal [doing]
                     <br />
                     <kbd>s</kbd> add subgoal [todo]
                     <br />
@@ -158,8 +237,9 @@ export default function Home() {
                 <td className="info-box">
                   <p>
                     <kbd>enter</kbd> select [todo] <br />
-                    <kbd>esc</kbd> cancel
-                    <br />
+                    <kbd>esc</kbd> cancel <br />
+                    <kbd>g</kbd> toggle Goals <br />
+                    <kbd>v</kbd> toggle video <br />
                   </p>
                 </td>
               </tr>
@@ -171,6 +251,19 @@ export default function Home() {
         </section>
       </main>
       <Todos />
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3></h3>
+              <button onClick={() => setShowModal(false)}>×</button>
+            </div>
+            <div className="modal-body">
+              <p>Hi</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
