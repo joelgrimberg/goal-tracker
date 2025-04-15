@@ -1,11 +1,10 @@
 import Hapi from "@hapi/hapi";
-import { Prisma } from "@prisma/client";
-/*
- * TODO: We can't use this type because it is available only in 2.11.0 and previous versions
- * In 2.12.0, this will be namespaced under Prisma and can be used as Prisma.UserCreateInput
- * Once 2.12.0 is release, we can adjust this example.
- */
-// import { UserCreateInput } from '@prisma/client'
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
+import Boom from "@hapi/boom";
+
+const UPLOADS_DIR = path.join(__dirname, "../../../uploads/avatars");
 
 // plugin to instantiate Prisma Client
 const usersPlugin = {
@@ -16,16 +15,24 @@ const usersPlugin = {
       {
         method: "POST",
         path: "/signup",
+        options: {
+          payload: {
+            maxBytes: 5 * 1024 * 1024, // 5MB limit for the entire payload
+            output: "stream",
+            parse: true,
+            allow: "multipart/form-data",
+          },
+        },
         handler: signupHandler,
       },
+    ]);
+    server.route([
+      {
+        method: "GET",
+        path: "/users",
+        handler: getAllUsersHandler,
+      },
     ]),
-      server.route([
-        {
-          method: "GET",
-          path: "/users",
-          handler: getAllUsersHandler,
-        },
-      ]),
       server.route([
         {
           method: "GET",
@@ -40,18 +47,57 @@ export default usersPlugin;
 
 async function signupHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
   const { prisma } = request.server.app;
-  const { name, email } = request.payload as any;
+
+  // Ensure the uploads directory exists
+  if (!fs.existsSync(UPLOADS_DIR)) {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  }
+
+  const payload = request.payload as any;
+
+  // Extract fields from the payload
+  const { name, email } = payload;
+  const avatar = payload.avatar; // Avatar file
+
+  if (!name || !email) {
+    throw Boom.badRequest("Name and email are required.");
+  }
+
+  let avatarUrl: string | null = null;
+
+  // Handle avatar upload
+  if (avatar) {
+    if (avatar._data.length > 4 * 1024 * 1024) {
+      throw Boom.badRequest("Avatar file size must not exceed 4MB.");
+    }
+
+    // Generate a unique hash for the file
+    const hash = crypto.createHash("sha256").update(avatar._data).digest("hex");
+    const fileExtension = path.extname(avatar.hapi.filename);
+    const uniqueFilename = `${hash}${fileExtension}`;
+    const filePath = path.join(UPLOADS_DIR, uniqueFilename);
+
+    // Save the file to the uploads directory
+    fs.writeFileSync(filePath, avatar._data);
+
+    // Set the avatar URL
+    avatarUrl = `/uploads/avatars/${uniqueFilename}`;
+  }
 
   try {
+    // Create the user in the database
     const createdUser = await prisma.user.create({
       data: {
         name,
         email,
+        avatarUrl,
       },
     });
+
     return h.response(createdUser).code(201);
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    throw Boom.internal("Failed to create user.");
   }
 }
 

@@ -1,7 +1,6 @@
 "use client";
 import useSWR from "swr";
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
 import Todos from "./components/todos";
 import { useAuth } from "./context/AuthContext"; // Import the useAuth hook
 
@@ -47,6 +46,17 @@ export default function Home() {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
+      // Ignore keypress if an input, textarea, select, or content-editable element is focused
+      const activeElement = document.activeElement;
+      if (
+        activeElement.tagName === "INPUT" ||
+        activeElement.tagName === "TEXTAREA" ||
+        activeElement.tagName === "SELECT" ||
+        activeElement.isContentEditable
+      ) {
+        return;
+      }
+
       if (!data) return;
 
       if (event.key === "l") {
@@ -169,7 +179,7 @@ export default function Home() {
                 </td>
                 <td className="info-box">
                   <p>
-                    <kbd>a</kbd> add goal [doing]
+                    <kbd>g</kbd> add goal [doing]
                     <br />
                     <kbd>s</kbd> add subgoal [todo]
                     <br />
@@ -201,7 +211,7 @@ export default function Home() {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h3></h3>
+              <h3>Header</h3>
               <button onClick={() => setShowModal(false)}>×</button>
             </div>
             <div className="modal-body">

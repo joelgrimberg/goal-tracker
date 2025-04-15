@@ -16,6 +16,7 @@ export default function LoginPage() {
   const { login } = useAuth(); // Access the login function from AuthContext
 
   const [formData, setFormData] = useState(initialState);
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
   // Add event listener for Escape key and Ctrl+Enter
   useEffect(() => {
@@ -47,6 +48,8 @@ export default function LoginPage() {
   // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage(""); // Clear any previous error messages
+
     try {
       console.log("Logging in with:", formData);
 
@@ -58,6 +61,12 @@ export default function LoginPage() {
         credentials: "include", // Include cookies for cross-origin requests
         body: JSON.stringify(formData),
       });
+
+      if (response.status === 401) {
+        // Set error message for invalid credentials
+        setErrorMessage("Invalid email or password. Please try again.");
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Login failed");
@@ -75,6 +84,7 @@ export default function LoginPage() {
       router.refresh();
     } catch (error) {
       console.error("Error logging in:", error);
+      setErrorMessage("An error occurred. Please try again later.");
     }
   };
 
@@ -113,7 +123,7 @@ export default function LoginPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="relative block w-full rounded-t-md border-0 p-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600"
+                className="relative block w-full rounded-t-md border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
                 placeholder="Email address"
               />
             </div>
@@ -131,11 +141,15 @@ export default function LoginPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
-                className="relative block w-full rounded-b-md border-0 p-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600"
+                className="relative block w-full rounded-t-md border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
                 placeholder="Password"
               />
             </div>
           </div>
+
+          {errorMessage && (
+            <p className="mt-2 text-sm text-red-600">{errorMessage}</p>
+          )}
 
           <div className="flex items-center justify-between">
             <div className="flex items-center">

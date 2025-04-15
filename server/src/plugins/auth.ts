@@ -1,8 +1,13 @@
 import Hapi from "@hapi/hapi";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
+import Boom from "@hapi/boom";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
+const UPLOADS_DIR = path.join(__dirname, "../../uploads/avatars");
 
 const authPlugin = {
   name: "app/auth",
@@ -16,10 +21,54 @@ const authPlugin = {
             origin: ["http://localhost:3001"], // Allow requests from this origin
             credentials: true, // Allow credentials
           },
+          payload: {
+            maxBytes: 5 * 1024 * 1024, // 5MB limit for the entire payload
+            output: "stream", // Required for handling file uploads
+            parse: true, // Automatically parse the payload
+            multipart: true, // Enable multipart handling
+            allow: "multipart/form-data", // Allow multipart form data
+          },
         },
         handler: async (request, h) => {
           const { prisma } = request.server.app;
-          const { email, password, name } = request.payload as any;
+          const payload = request.payload as any;
+
+          // Extract fields from the payload
+          const { email, password, name } = payload;
+          const avatar = payload.avatar; // Avatar file
+
+          if (!email || !password || !name) {
+            throw Boom.badRequest("Email, password, and name are required.");
+          }
+
+          // Ensure the uploads directory exists
+          if (!fs.existsSync(UPLOADS_DIR)) {
+            fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+          }
+
+          let avatarUrl: string | null = null;
+
+          // Handle avatar upload
+          if (avatar) {
+            if (avatar._data.length > 4 * 1024 * 1024) {
+              throw Boom.badRequest("Avatar file size must not exceed 4MB.");
+            }
+
+            // Generate a unique hash for the file
+            const hash = crypto
+              .createHash("sha256")
+              .update(avatar._data)
+              .digest("hex");
+            const fileExtension = path.extname(avatar.hapi.filename);
+            const uniqueFilename = `${hash}${fileExtension}`;
+            const filePath = path.join(UPLOADS_DIR, uniqueFilename);
+
+            // Save the file to the uploads directory
+            fs.writeFileSync(filePath, avatar._data);
+
+            // Set the avatar URL
+            avatarUrl = `/uploads/avatars/${uniqueFilename}`;
+          }
 
           try {
             // Check if the user already exists
@@ -39,11 +88,17 @@ const authPlugin = {
                 email,
                 password: hashedPassword,
                 name,
+                avatarUrl, // Save the avatar URL in the database
               },
             });
 
             return h
-              .response({ id: user.id, email: user.email, name: user.name })
+              .response({
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                avatarUrl,
+              })
               .code(201);
           } catch (error) {
             console.error(error);
@@ -51,6 +106,7 @@ const authPlugin = {
           }
         },
       },
+
       {
         method: "POST",
         path: "/auth/login",

@@ -3,28 +3,24 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const initialState = {
-  name: "",
-  email: "",
-  password: "",
-};
-
 export default function RegisterPage() {
-  const formRef = useRef(null);
+  const nameInputRef = useRef(null);
   const router = useRouter();
 
-  const [formData, setFormData] = useState(initialState);
+  useEffect(() => {
+    if (nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
+  }, []);
 
-  // Add event listener for Escape key and Ctrl+Enter
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        router.push("/"); // Navigate back to the home page
-      } else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-        // Ctrl+Enter or Cmd+Enter (for Mac)
-        e.preventDefault();
-        if (formRef.current) {
-          formRef.current.requestSubmit();
+        if (
+          document.activeElement.tagName !== "INPUT" &&
+          document.activeElement.tagName !== "TEXTAREA"
+        ) {
+          router.push("/");
         }
       }
     };
@@ -35,30 +31,59 @@ export default function RegisterPage() {
     };
   }, [router]);
 
-  // Form submission handler
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const [avatar, setAvatar] = useState(null); // State to store the avatar file
+  const [error, setError] = useState(""); // State to store error messages
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 4 * 1024 * 1024) {
+        // Check if the file size exceeds 4MB
+        setError("Avatar file size must not exceed 4MB.");
+        setAvatar(null);
+      } else {
+        setError("");
+        setAvatar(file);
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      console.log("Registering with:", formData);
 
-      // Call the register API
+    if (!avatar) {
+      setError("Please upload an avatar.");
+      return;
+    }
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("name", formData.name);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("password", formData.password);
+    formDataToSend.append("avatar", avatar);
+
+    try {
       const response = await fetch("http://localhost:3000/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // Include cookies for cross-origin requests
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
 
       if (!response.ok) {
-        throw new Error("Registration failed");
+        throw new Error("Failed to register user.");
       }
 
-      // Redirect to the login page after successful registration
+      const data = await response.json();
+      console.log("Registration successful:", data);
       router.push("/login");
-    } catch (error) {
-      console.error("Error registering:", error);
+    } catch (err) {
+      console.error("Error during registration:", err);
+      setError("Failed to register. Please try again.");
     }
   };
 
@@ -67,20 +92,11 @@ export default function RegisterPage() {
       <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-6 shadow-md">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900">
-            Create a new account
+            Create your account
           </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Or{" "}
-            <a
-              href="/login"
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              sign in to your account
-            </a>
-          </p>
         </div>
 
-        <form onSubmit={handleSubmit} ref={formRef} className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="-space-y-px rounded-md shadow-sm">
             <div>
               <label htmlFor="name" className="sr-only">
@@ -92,20 +108,21 @@ export default function RegisterPage() {
                 type="text"
                 autoComplete="name"
                 required
+                ref={nameInputRef}
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="relative block w-full rounded-t-md border-0 p-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600"
+                className="relative block w-full rounded-t-md border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
                 placeholder="Full Name"
               />
             </div>
             <div>
-              <label htmlFor="email-address" className="sr-only">
+              <label htmlFor="email" className="sr-only">
                 Email address
               </label>
               <input
-                id="email-address"
+                id="email"
                 name="email"
                 type="email"
                 autoComplete="email"
@@ -114,7 +131,7 @@ export default function RegisterPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="relative block w-full border-0 p-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600"
+                className="relative block w-full border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
                 placeholder="Email address"
               />
             </div>
@@ -132,32 +149,29 @@ export default function RegisterPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
-                className="relative block w-full rounded-b-md border-0 p-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600"
+                className="relative block w-full rounded-b-md border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
                 placeholder="Password"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="avatar"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Avatar (Max 4MB)
+              </label>
+              <input
+                id="avatar"
+                name="avatar"
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="terms"
-                name="terms"
-                type="checkbox"
-                required
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
-              />
-              <label
-                htmlFor="terms"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                I agree to the{" "}
-                <a href="#" className="text-blue-600 hover:text-blue-500">
-                  terms and conditions
-                </a>
-              </label>
-            </div>
-          </div>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
 
           <div>
             <button
