@@ -9,9 +9,6 @@ const initialState = {
 };
 
 export default function GoalDetails() {
-  // const [state, pending] = useActionState(updateGoal, initialState);
-  //
-  //
   const formRef = useRef(null);
 
   const searchParams = useSearchParams();

@@ -3,10 +3,16 @@ import useSWR from "swr";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Todos from "./components/todos";
+import { useAuth } from "./context/AuthContext"; // Import the useAuth hook
 
 const fetcher = (url) => fetch(url).then((r) => r.json());
 
 export default function Home() {
+  const [menuVisible, setMenuVisible] = useState(false);
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
   const { data, error, isLoading } = useSWR(
     "http://localhost:3000/feed/goals",
     fetcher,
@@ -14,8 +20,8 @@ export default function Home() {
   const [selectedRow, setSelectedRow] = useState(-1);
   const [hoverText, setHoverText] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
-  const videoRef = useRef(null);
+
+  const { isLoggedIn, logout } = useAuth(); // Access login state and logout function from AuthContext
 
   const handleDelete = async () => {
     const confirmed = window.confirm(
@@ -29,7 +35,6 @@ export default function Home() {
         });
         if (response.ok) {
           console.log(`Deleted goal with id: ${goalId}`);
-          // Optionally, you can update the state to remove the deleted goal from the UI
           location.reload();
         } else {
           console.error("Failed to delete the goal");
@@ -40,35 +45,32 @@ export default function Home() {
     }
   };
 
-  // Toggle video playback
-  const toggleVideo = () => {
-    if (videoRef.current) {
-      if (isVideoPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsVideoPlaying(!isVideoPlaying);
-    }
-  };
-
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (!data) return;
 
-      if ((event.key === "Enter" || event.key === "e") && selectedRow !== -1) {
+      if (event.key === "l") {
+        if (isLoggedIn) {
+          logout(); // Log the user out
+        } else {
+          window.location.href = "http://localhost:3001/login"; // Redirect to login page
+        }
+      } else if (
+        (event.key === "Enter" || event.key === "e") &&
+        selectedRow !== -1
+      ) {
         window.location.href =
           "http://localhost:3001/goal/edit?id=" + data[selectedRow].id;
       } else if (event.key === "ArrowDown" || event.key === "j") {
         setSelectedRow((prev) => (prev < data.length - 1 ? prev + 1 : 0));
-        setHoverText(""); // Clear the hover text
+        setHoverText("");
       } else if (event.key === "ArrowUp" || event.key === "k") {
         if (selectedRow === -1) {
-          setSelectedRow(data.length - 1); // Select the last row if no row is selected
+          setSelectedRow(data.length - 1);
         } else {
           setSelectedRow((prev) => (prev > 0 ? prev - 1 : data.length - 1));
         }
-        setHoverText(""); // Clear the hover text
+        setHoverText("");
       } else if (event.key === "i" && selectedRow !== -1) {
         setHoverText((prev) => (prev ? "" : data[selectedRow].description));
       }
@@ -77,11 +79,9 @@ export default function Home() {
       } else if (event.key === "Escape") {
         setSelectedRow(-1);
         setHoverText("");
-        setShowModal(false); // Also close the modal on Escape
+        setShowModal(false);
       } else if (event.key === "t" && selectedRow !== -1) {
         handleDelete(selectedRow);
-      } else if (event.key === "v") {
-        toggleVideo();
       }
     };
 
@@ -89,11 +89,10 @@ export default function Home() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [data, selectedRow, isVideoPlaying]);
+  }, [data, selectedRow, isLoggedIn, logout]);
 
   const handleRowHover = (index) => {
     setSelectedRow(index);
-    // setHoverText(data[index].description);
   };
 
   const clearState = () => {
@@ -106,66 +105,8 @@ export default function Home() {
 
   return (
     <div>
-      {/* Background video with better blending */}
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        loop
-        id="background-video"
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          zIndex: "-2", // Behind overlay
-        }}
-      >
-        <source src="/video.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-
-      {/* Video status indicator */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: "10px",
-          right: "10px",
-          background: "rgba(0,0,0,0.5)",
-          color: "white",
-          padding: "5px 10px",
-          borderRadius: "3px",
-          fontSize: "12px",
-          opacity: 0.7,
-          zIndex: 1,
-        }}
-      >
-        Video: {isVideoPlaying ? "Playing" : "Paused"} (Press 'v' to toggle)
-      </div>
-
-      {/* Overlay to blend video with background */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(0,0,0,0.85)", // Darker overlay for more subtle video
-          backdropFilter: "blur(3px)", // Add blur effect
-          zIndex: "-1",
-        }}
-      />
-
-      <main>
-        <img
-          id="background"
-          src="/background.svg"
-          alt=""
-          fetchPriority="high"
-        />
+      {/* Main Content */}
+      <main className="pt-16">
         <section id="hero">
           <table className="table-width">
             <thead>
@@ -221,7 +162,8 @@ export default function Home() {
                     <kbd>i</kbd> info [todo]
                     <br />
                     <kbd>e</kbd> edit [todo] <br />
-                    <kbd>t</kbd> trash
+                    <kbd>t</kbd> trash <br />
+                    <kbd>l</kbd> login/logout
                     <br />
                   </p>
                 </td>
@@ -250,7 +192,11 @@ export default function Home() {
           )}
         </section>
       </main>
+
+      {/* Todos Component */}
       <Todos />
+
+      {/* Modal */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">

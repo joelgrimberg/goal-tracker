@@ -1,8 +1,12 @@
 import Hapi from "@hapi/hapi";
+import dotenv from "dotenv"; // Import dotenv
 import prisma from "./plugins/prisma";
 import users from "./plugins/users";
-import posts from "./plugins/posts";
 import goals from "./plugins/goals";
+import auth from "./plugins/auth";
+
+// Load environment variables from .env file
+dotenv.config();
 
 const server: Hapi.Server = Hapi.server({
   port: process.env.PORT || 3000,
@@ -13,7 +17,8 @@ const server: Hapi.Server = Hapi.server({
 });
 
 export async function start(): Promise<Hapi.Server> {
-  await server.register([prisma, users, posts, goals]);
+  // Register all plugins, including the auth plugin
+  await server.register([prisma, users, goals, auth]);
   await server.start();
   return server;
 }

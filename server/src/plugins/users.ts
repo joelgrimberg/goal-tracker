@@ -40,20 +40,13 @@ export default usersPlugin;
 
 async function signupHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
   const { prisma } = request.server.app;
-  const { name, email, posts } = request.payload as any;
-
-  const postData = posts?.map((post: Prisma.PostCreateInput) => {
-    return { title: post?.title, content: post?.content };
-  });
+  const { name, email } = request.payload as any;
 
   try {
     const createdUser = await prisma.user.create({
       data: {
         name,
         email,
-        posts: {
-          create: postData,
-        },
       },
     });
     return h.response(createdUser).code(201);
@@ -84,13 +77,9 @@ async function getDraftsByUserHandler(
 
   const userId = Number(request.params.userId);
   try {
-    const drafts = await prisma.user
-      .findUnique({
-        where: { id: userId },
-      })
-      .posts({
-        where: { published: false },
-      });
+    const drafts = await prisma.user.findUnique({
+      where: { id: userId },
+    });
 
     return h.response(drafts || undefined).code(200);
   } catch (err) {

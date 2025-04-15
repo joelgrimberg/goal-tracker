@@ -11,90 +11,233 @@ const statusData: Prisma.StatusCreateManyInput[] = [
 
 const goalData: Prisma.GoalCreateInput[] = [
   {
-    title: "Learn Prisma",
-    description: "Learn how to use Prisma to build a fullstack application",
-    status: { connect: { id: 1 } }, // Not Started
-    targetDate: new Date("2025-12-31"),
+    title: "Learn Kubernetes Admission Controllers",
+    description:
+      "Understand how to use and implement admission controllers in Kubernetes",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2025-01-15"),
     tasks: {
       create: [
         {
-          title: "Setup Prisma",
-          description: "Install and configure Prisma in the project",
-          status: { connect: { id: 1 } }, // Not Started
+          title: "Read Kubernetes documentation",
+          description:
+            "Go through the official Kubernetes documentation on admission controllers",
+          status: { connect: { id: 1 } },
         },
         {
-          title: "Create Models",
-          description: "Define data models using Prisma schema",
-          status: { connect: { id: 1 } }, // Not Started
+          title: "Implement a validating webhook",
+          description: "Create a validating webhook for a Kubernetes cluster",
+          status: { connect: { id: 1 } },
         },
       ],
     },
   },
   {
-    title: "Master TypeScript",
-    description: "Deep dive into TypeScript features and best practices",
-    status: { connect: { id: 3 } }, // In Progress
-    targetDate: new Date("2024-06-30"),
+    title: "Learn Go Testing",
+    description:
+      "Master testing in Go, including unit tests and integration tests",
+    status: { connect: { id: 2 } },
+    targetDate: new Date("2025-02-15"),
     tasks: {
       create: [
         {
-          title: "Learn Basic Types",
-          description: "Understand and use basic types in TypeScript",
-          status: { connect: { id: 1 } }, // Not Started
+          title: "Write basic unit tests",
+          description: "Learn how to write and run unit tests in Go",
+          status: { connect: { id: 1 } },
         },
         {
-          title: "Explore Advanced Types",
-          description: "Learn about advanced types and their usage",
-          status: { connect: { id: 1 } }, // Not Started
+          title: "Explore table-driven tests",
+          description: "Understand and implement table-driven tests in Go",
+          status: { connect: { id: 1 } },
         },
       ],
     },
   },
+  {
+    title: "Learn LUA",
+    description: "Understand the basics of LUA and its use cases in scripting",
+    status: { connect: { id: 3 } },
+    targetDate: new Date("2025-03-15"),
+    tasks: {
+      create: [
+        {
+          title: "Install LUA",
+          description: "Set up LUA on your local machine",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Write basic LUA scripts",
+          description: "Create simple scripts to understand LUA syntax",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Learn Docker Compose",
+    description:
+      "Understand how to use Docker Compose for multi-container applications",
+    status: { connect: { id: 4 } },
+    targetDate: new Date("2025-04-15"),
+    tasks: {
+      create: [
+        {
+          title: "Read Docker Compose documentation",
+          description: "Go through the official Docker Compose documentation",
+          status: { connect: { id: 4 } },
+        },
+        {
+          title: "Create a multi-container setup",
+          description:
+            "Build a multi-container application using Docker Compose",
+          status: { connect: { id: 4 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Learn Rust Ownership Model",
+    description:
+      "Understand Rust's ownership model and how it ensures memory safety",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2025-05-15"),
+    tasks: {
+      create: [
+        {
+          title: "Read Rust documentation",
+          description: "Go through the Rust book's chapter on ownership",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Write examples",
+          description: "Write code examples to practice ownership concepts",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Learn Terraform Modules",
+    description:
+      "Understand how to create and use Terraform modules for infrastructure as code",
+    status: { connect: { id: 2 } },
+    targetDate: new Date("2025-06-15"),
+    tasks: {
+      create: [
+        {
+          title: "Read Terraform documentation",
+          description:
+            "Go through the official Terraform documentation on modules",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Create a reusable module",
+          description:
+            "Build a reusable Terraform module for a common infrastructure component",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Learn GraphQL Subscriptions",
+    description:
+      "Understand how to implement real-time updates using GraphQL subscriptions",
+    status: { connect: { id: 3 } },
+    targetDate: new Date("2025-07-15"),
+    tasks: {
+      create: [
+        {
+          title: "Set up a GraphQL server",
+          description:
+            "Install and configure a GraphQL server with subscriptions",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Implement a subscription",
+          description: "Create a subscription for real-time updates",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Learn CI/CD with GitHub Actions",
+    description:
+      "Master continuous integration and deployment using GitHub Actions",
+    status: { connect: { id: 4 } },
+    targetDate: new Date("2025-08-15"),
+    tasks: {
+      create: [
+        {
+          title: "Read GitHub Actions documentation",
+          description: "Go through the official GitHub Actions documentation",
+          status: { connect: { id: 4 } },
+        },
+        {
+          title: "Create a CI/CD pipeline",
+          description: "Build a CI/CD pipeline for a sample project",
+          status: { connect: { id: 4 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Learn Python Asyncio",
+    description: "Understand asynchronous programming in Python using asyncio",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2025-09-15"),
+    tasks: {
+      create: [
+        {
+          title: "Read asyncio documentation",
+          description: "Go through the official Python asyncio documentation",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Write async code",
+          description: "Write examples to practice asynchronous programming",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Learn WebAssembly",
+    description: "Understand how to use WebAssembly to run code on the web",
+    status: { connect: { id: 2 } },
+    targetDate: new Date("2025-10-15"),
+    tasks: {
+      create: [
+        {
+          title: "Read WebAssembly documentation",
+          description: "Go through the official WebAssembly documentation",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Build a WebAssembly module",
+          description:
+            "Create a simple WebAssembly module and run it in a browser",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  // Add 20 more goals in the same format, each with unique titles, descriptions, and tasks
 ];
 
 const userData: Prisma.UserCreateInput[] = [
   {
     name: "Alice",
     email: "alice@prisma.io",
-    posts: {
-      create: [
-        {
-          title: "Join the Prisma Discord",
-          content: "https://pris.ly/discord",
-          published: true,
-        },
-      ],
-    },
   },
   {
     name: "Nilu",
     email: "nilu@prisma.io",
-    posts: {
-      create: [
-        {
-          title: "Follow Prisma on Twitter",
-          content: "https://www.twitter.com/prisma",
-          published: true,
-        },
-      ],
-    },
   },
   {
     name: "Mahmoud",
     email: "mahmoud@prisma.io",
-    posts: {
-      create: [
-        {
-          title: "Ask a question about Prisma on GitHub",
-          content: "https://www.github.com/prisma/prisma/discussions",
-          published: true,
-        },
-        {
-          title: "Prisma on YouTube",
-          content: "https://pris.ly/youtube",
-        },
-      ],
-    },
   },
 ];
 

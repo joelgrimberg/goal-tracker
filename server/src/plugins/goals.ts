@@ -7,7 +7,6 @@ import Hapi from "@hapi/hapi";
 // import { PostGetPayload } from '@prisma/client'
 
 // plugin to instantiate Prisma Client
-console.log("goals.ts");
 const goalsPlugin = {
   name: "app/goals",
   dependencies: ["prisma"],
