@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import Boom from "@hapi/boom";
+import { exec } from "child_process";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 const UPLOADS_DIR = path.join(__dirname, "../../uploads/avatars");
@@ -191,6 +192,43 @@ const authPlugin = {
         handler: async (request, h) => {
           const user = request.pre.user;
           return h.response(user).code(200);
+        },
+      },
+      {
+        method: "POST",
+        path: "/seed",
+        options: {
+          cors: {
+            origin: ["http://localhost:3001"], // Allow requests from this origin
+            credentials: true, // Allow credentials
+          },
+        },
+        handler: async (request, h) => {
+          try {
+            const seedScriptPath = path.resolve(
+              __dirname,
+              "../../prisma/seed.ts",
+            );
+
+            // Run the seed script using ts-node
+            await new Promise((resolve, reject) => {
+              exec(`npx ts-node ${seedScriptPath}`, (error, stdout, stderr) => {
+                if (error) {
+                  console.error(stderr);
+                  return reject(error);
+                }
+                console.log(stdout);
+                resolve(stdout);
+              });
+            });
+
+            return h
+              .response({ message: "Database seeded successfully" })
+              .code(200);
+          } catch (error) {
+            console.error(error);
+            return h.response({ error: "Failed to seed database" }).code(500);
+          }
         },
       },
     ]);
