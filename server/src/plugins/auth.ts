@@ -127,6 +127,13 @@ const authPlugin = {
             // Find the user
             const user = await prisma.user.findUnique({
               where: { email },
+              select: {
+                id: true,
+                email: true,
+                password: true,
+                name: true, // Include the name field
+                avatarUrl: true, // Include the avatar field
+              },
             });
             if (!user) {
               return h
@@ -154,7 +161,14 @@ const authPlugin = {
               },
             );
 
-            return h.response({ token }).code(200);
+            // Return the token, name, and avatar (if available)
+            return h
+              .response({
+                token,
+                name: user.name, // Include the user's name
+                avatar: user.avatarUrl || null, // Include the avatar in the response
+              })
+              .code(200);
           } catch (error) {
             console.error(error);
             return h.response({ error: "Failed to login" }).code(500);

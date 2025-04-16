@@ -11,10 +11,16 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(!!token); // Set login state based on token presence
   }, []);
 
-  const login = () => setIsLoggedIn(true); // Set login state to true
+  const login = () => {
+    setIsLoggedIn(true); // Set login state to true
+    window.location.href = "/";
+  };
   const logout = () => {
     localStorage.removeItem("authToken"); // Remove token from localStorage
+    localStorage.removeItem("userAvatar"); // Remove token from localStorage
+    localStorage.removeItem("userName"); // Remove token from localStorage
     setIsLoggedIn(false); // Set login state to false
+    window.location.reload(); // Refresh the page
   };
 
   // Function to reset the database

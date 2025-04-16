@@ -4,6 +4,8 @@ import prisma from "./plugins/prisma";
 import users from "./plugins/users";
 import goals from "./plugins/goals";
 import auth from "./plugins/auth";
+import Inert from "@hapi/inert";
+import path from "path";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -19,6 +21,20 @@ const server: Hapi.Server = Hapi.server({
 export async function start(): Promise<Hapi.Server> {
   // Register all plugins, including the auth plugin
   await server.register([prisma, users, goals, auth]);
+  await server.register(Inert);
+
+  server.route({
+    method: "GET",
+    path: "/uploads/avatars/{filename}",
+    handler: {
+      directory: {
+        path: path.join(__dirname, "../uploads/avatars"),
+        redirectToSlash: true,
+        index: false,
+      },
+    },
+  });
+
   await server.start();
   return server;
 }

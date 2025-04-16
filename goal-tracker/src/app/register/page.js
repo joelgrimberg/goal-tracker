@@ -57,16 +57,14 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!avatar) {
-      setError("Please upload an avatar.");
-      return;
-    }
-
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name);
     formDataToSend.append("email", formData.email);
     formDataToSend.append("password", formData.password);
-    formDataToSend.append("avatar", avatar);
+
+    if (avatar) {
+      formDataToSend.append("avatar", avatar);
+    }
 
     try {
       const response = await fetch("http://localhost:3000/auth/register", {
@@ -158,7 +156,7 @@ export default function RegisterPage() {
                 htmlFor="avatar"
                 className="block text-sm font-medium text-gray-700"
               >
-                Avatar (Max 4MB)
+                Avatar (Optional, Max 4MB)
               </label>
               <input
                 id="avatar"

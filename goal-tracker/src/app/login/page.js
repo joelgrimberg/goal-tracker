@@ -77,6 +77,8 @@ export default function LoginPage() {
 
       // Store the token in localStorage (or use cookies for better security)
       localStorage.setItem("authToken", token);
+      localStorage.setItem("userName", data.name);
+      localStorage.setItem("userAvatar", data.avatar);
 
       login(); // Call the login function from AuthContext to update the global state
       // Redirect to the home page after successful login

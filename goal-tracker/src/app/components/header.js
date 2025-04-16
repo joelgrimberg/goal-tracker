@@ -2,21 +2,35 @@
 
 import {
   Bars3Icon,
-  InformationCircleIcon,
   XMarkIcon,
   HomeIcon,
+  InformationCircleIcon,
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const [menuVisible, setMenuVisible] = useState(false); // Ensure consistent initial state
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [user, setUser] = useState(null); // State for user info
+  const [isClient, setIsClient] = useState(false); // State to check if rendering on the client
   const router = useRouter();
 
   const toggleMenu = () => {
     setMenuVisible((prev) => !prev);
   };
+
+  useEffect(() => {
+    // Ensure this runs only on the client
+    setIsClient(true);
+
+    // Fetch user data from localStorage
+    const name = localStorage.getItem("userName");
+    const avatar = localStorage.getItem("userAvatar");
+    if (name || avatar) {
+      setUser({ name, avatar });
+    }
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -51,17 +65,30 @@ export default function Header() {
       <div className="text-lg font-bold">
         <Link href="/">Goal Tracker</Link>
       </div>
-      <button
-        onClick={toggleMenu}
-        className="p-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-        aria-label="Toggle Menu"
-      >
-        {menuVisible ? (
-          <XMarkIcon className="h-6 w-6" />
-        ) : (
-          <Bars3Icon className="h-6 w-6" />
+      <div className="flex items-center space-x-4">
+        {/* Ensure this only renders on the client */}
+        {isClient && user?.avatar && (
+          <img
+            src={`http://localhost:3000${user.avatar}`}
+            alt="User Avatar"
+            className="w-10 h-10 rounded-full"
+          />
         )}
-      </button>
+        {isClient && user?.name && (
+          <span className="text-sm font-medium">{user.name}</span>
+        )}
+        <button
+          onClick={toggleMenu}
+          className="p-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          aria-label="Toggle Menu"
+        >
+          {menuVisible ? (
+            <XMarkIcon className="h-6 w-6" />
+          ) : (
+            <Bars3Icon className="h-6 w-6" />
+          )}
+        </button>
+      </div>
       {menuVisible && (
         <nav className="absolute top-12 right-4 bg-gray-700 text-white rounded-md shadow-lg">
           <ul className="flex flex-col">
