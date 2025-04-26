@@ -89,20 +89,28 @@ export default function DeveloperInfoPage() {
     <div>
       <main className="pt-16">
         <section id="developer-info">
-          <table className="table-width">
+          <table
+            className="table-width"
+            role="grid"
+            aria-label="Developer Information"
+          >
             <thead>
               <tr>
-                <th>Value</th>
+                <th scope="col">Value</th>
               </tr>
             </thead>
             <tbody>
               {developerInfo.map((info, index) => (
                 <tr
                   key={index}
+                  role="row"
                   className={selectedRow === index ? "highlight" : ""}
                   onMouseEnter={() => setSelectedRow(index)}
+                  aria-selected={selectedRow === index}
+                  tabIndex={0}
+                  onFocus={() => setSelectedRow(index)}
                 >
-                  <td className="">
+                  <td role="gridcell">
                     {info.type === "link" ||
                     info.type === "email" ||
                     info.icon ? (
@@ -117,6 +125,7 @@ export default function DeveloperInfoPage() {
                         target={info.type === "link" ? "_blank" : undefined}
                         rel="noopener noreferrer"
                         className="goal-link flex items-center space-x-2"
+                        aria-label={info.label}
                       >
                         {info.icon}
                         <span>{info.value}</span>
@@ -130,7 +139,7 @@ export default function DeveloperInfoPage() {
             </tbody>
             <tfoot>
               <tr>
-                <td className="info-box">
+                <td colSpan="2" className="info-box">
                   <p>
                     <kbd>j</kbd>/<kbd>↓</kbd> down <br />
                     <kbd>k</kbd>/<kbd>↑</kbd> up <br />

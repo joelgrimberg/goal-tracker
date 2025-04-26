@@ -1,5 +1,5 @@
 "use client";
-import { Geist, Geist_Mono } from "next/font/google";
+// import { Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
 import Header from "./components/header.js";
@@ -8,15 +8,15 @@ import Image from "next/image";
 
 import { AuthProvider } from "./context/AuthContext"; // Import the AuthProvider
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
+//
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
 export default function RootLayout({ children }) {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -59,7 +59,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         data-cy="app"
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {/* Wrap the entire app with AuthProvider */}
         <AuthProvider>

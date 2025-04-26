@@ -86,15 +86,27 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4">
+    <div
+      className="flex min-h-screen flex-col items-center justify-center p-4"
+      role="main"
+      aria-labelledby="register-heading"
+    >
       <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-6 shadow-md">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1
+            id="register-heading"
+            className="text-2xl font-bold text-gray-900"
+            tabIndex={-1}
+          >
             Create your account
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <form
+          onSubmit={handleSubmit}
+          className="mt-8 space-y-6"
+          aria-describedby="error-message"
+        >
           <div className="-space-y-px rounded-md shadow-sm">
             <div>
               <label htmlFor="name" className="sr-only">
@@ -113,6 +125,7 @@ export default function RegisterPage() {
                 }
                 className="relative block w-full rounded-t-md border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
                 placeholder="Full Name"
+                aria-required="true"
               />
             </div>
             <div>
@@ -131,6 +144,7 @@ export default function RegisterPage() {
                 }
                 className="relative block w-full border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
                 placeholder="Email address"
+                aria-required="true"
               />
             </div>
             <div>
@@ -149,6 +163,7 @@ export default function RegisterPage() {
                 }
                 className="relative block w-full rounded-b-md border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
                 placeholder="Password"
+                aria-required="true"
               />
             </div>
             <div>
@@ -165,16 +180,25 @@ export default function RegisterPage() {
                 accept="image/*"
                 onChange={handleAvatarChange}
                 className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                aria-describedby="avatar-description"
               />
+              <p id="avatar-description" className="text-sm text-gray-500">
+                Upload an avatar image (optional, max size 4MB).
+              </p>
             </div>
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && (
+            <p id="error-message" className="text-red-500 text-sm" role="alert">
+              {error}
+            </p>
+          )}
 
           <div>
             <button
               type="submit"
               className="group relative flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              aria-label="Register your account"
             >
               Register
             </button>

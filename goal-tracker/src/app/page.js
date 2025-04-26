@@ -99,7 +99,7 @@ export default function Home() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [data, selectedRow, isLoggedIn, logout]);
+  }, [data, selectedRow, isLoggedIn, logout, handleDelete]);
 
   const handleRowHover = (index) => {
     setSelectedRow(index);
@@ -116,40 +116,48 @@ export default function Home() {
   return (
     <div>
       {/* Main Content */}
-      <main className="pt-16">
+      <main className="pt-16" role="main" aria-labelledby="goals-heading">
         <section id="hero">
-          <table className="table-width">
+          <h1 id="goals-heading" className="sr-only">
+            Goals Table
+          </h1>
+          <table
+            className="table-width"
+            role="grid"
+            aria-label="Goals Table"
+            aria-describedby="keyboard-shortcuts"
+          >
             <thead>
               <tr>
-                <th>
-                  <p>Title</p>
-                </th>
-                <th>Status</th>
-                <th>Target Date</th>
-                <th>Days Left</th>
+                <th scope="col">Title</th>
+                <th scope="col">Target Date</th>
+                <th scope="col">Days Left</th>
               </tr>
             </thead>
             <tbody onMouseLeave={() => clearState()}>
               {data.map((goal, index) => (
                 <tr
                   key={goal.id}
+                  role="row"
                   className={selectedRow === index ? "highlight" : ""}
                   onMouseEnter={() => handleRowHover(index)}
+                  aria-selected={selectedRow === index}
                 >
-                  <td className="break-word fixed-width-600">
+                  <td role="gridcell" className="break-word fixed-width-600">
                     <a
                       href={`http://localhost:3000/goal/${goal.id}`}
                       data-cy={`goal-link-${goal.id}`}
                       className="goal-link"
+                      aria-label={`View details for goal: ${goal.title}`}
                     >
                       {goal.title}
                     </a>
                   </td>
-                  <td className="break-word">{goal.status}</td>
-                  <td className="break-word">
+
+                  <td role="gridcell" className="break-word">
                     {goal.targetDate.split("T")[0]}
                   </td>
-                  <td>
+                  <td role="gridcell">
                     {Math.floor(
                       (new Date(goal.targetDate) - Date.now()) /
                         (1000 * 60 * 60 * 24),
@@ -160,45 +168,28 @@ export default function Home() {
             </tbody>
             <tfoot>
               <tr>
-                <td className="info-box">
+                <td className="info-box" colSpan="4" id="keyboard-shortcuts">
                   <p>
                     <kbd>j</kbd>/<kbd>↓</kbd> down <br />
-                    <kbd>k</kbd>/<kbd>↑</kbd> up
-                    <br />
-                  </p>
-                </td>
-                <td className="info-box">
-                  <p>
-                    <kbd>i</kbd> info [todo]
-                    <br />
-                    <kbd>e</kbd> edit [todo] <br />
+                    <kbd>k</kbd>/<kbd>↑</kbd> up <br />
+                    <kbd>i</kbd> info <br />
+                    <kbd>e</kbd> edit <br />
                     <kbd>t</kbd> trash <br />
-                    <kbd>l</kbd> login/logout
-                    <br />
-                  </p>
-                </td>
-                <td className="info-box">
-                  <p>
-                    <kbd>g</kbd> add goal [doing]
-                    <br />
-                    <kbd>s</kbd> add subgoal [todo]
-                    <br />
-                  </p>
-                </td>
-
-                <td className="info-box">
-                  <p>
-                    <kbd>enter</kbd> select [todo] <br />
+                    <kbd>l</kbd> login/logout <br />
                     <kbd>esc</kbd> cancel <br />
-                    <kbd>g</kbd> toggle Goals <br />
-                    <kbd>v</kbd> toggle video <br />
                   </p>
                 </td>
               </tr>
             </tfoot>
           </table>
           {hoverText && (
-            <div className="hover-text show-hover-text">{hoverText}</div>
+            <div
+              className="hover-text show-hover-text"
+              role="tooltip"
+              aria-live="polite"
+            >
+              {hoverText}
+            </div>
           )}
         </section>
       </main>
@@ -208,13 +199,23 @@ export default function Home() {
 
       {/* Modal */}
       {showModal && (
-        <div className="modal-overlay">
+        <div
+          className="modal-overlay"
+          role="dialog"
+          aria-labelledby="modal-header"
+          aria-describedby="modal-body"
+        >
           <div className="modal-content">
             <div className="modal-header">
-              <h3>Header</h3>
-              <button onClick={() => setShowModal(false)}>×</button>
+              <h3 id="modal-header">Header</h3>
+              <button
+                onClick={() => setShowModal(false)}
+                aria-label="Close modal"
+              >
+                ×
+              </button>
             </div>
-            <div className="modal-body">
+            <div className="modal-body" id="modal-body">
               <p>Hi</p>
             </div>
           </div>

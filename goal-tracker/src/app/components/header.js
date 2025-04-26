@@ -61,9 +61,14 @@ export default function Header() {
   }, [router]);
 
   return (
-    <header className="flex items-center justify-between px-4 py-2 bg-gray-800 text-white">
+    <header
+      className="flex items-center justify-between px-4 py-2 bg-gray-800 text-white"
+      role="banner"
+    >
       <div className="text-lg font-bold">
-        <Link href="/">Goal Tracker</Link>
+        <Link href="/" aria-label="Go to Goal Tracker home page">
+          Goal Tracker
+        </Link>
       </div>
       <div className="flex items-center space-x-4">
         {/* Ensure this only renders on the client */}
@@ -75,12 +80,18 @@ export default function Header() {
           />
         )}
         {isClient && user?.name && (
-          <span className="text-sm font-medium">{user.name}</span>
+          <span
+            className="text-sm font-medium"
+            aria-label={`Logged in as ${user.name}`}
+          >
+            {user.name}
+          </span>
         )}
         <button
           onClick={toggleMenu}
           className="p-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-          aria-label="Toggle Menu"
+          aria-label={menuVisible ? "Close menu" : "Open menu"}
+          aria-expanded={menuVisible}
         >
           {menuVisible ? (
             <XMarkIcon className="h-6 w-6" />
@@ -90,25 +101,40 @@ export default function Header() {
         </button>
       </div>
       {menuVisible && (
-        <nav className="absolute top-12 right-4 bg-gray-700 text-white rounded-md shadow-lg">
+        <nav
+          className="absolute top-12 right-4 bg-gray-700 text-white rounded-md shadow-lg"
+          role="navigation"
+          aria-label="Main menu"
+        >
           <ul className="flex flex-col">
-            <li className="px-4 py-2 hover:bg-gray-600 flex items-center space-x-2">
+            <li
+              className="px-4 py-2 hover:bg-gray-600 flex items-center space-x-2"
+              role="menuitem"
+            >
               <HomeIcon className="h-5 w-5" />
               <Link
                 href={{
                   pathname: "/",
                   query: { name: "home" },
                 }}
+                aria-label="Go to home page"
               >
                 [h]ome
               </Link>
             </li>
-            <li className="px-4 py-2 hover:bg-gray-600 flex items-center space-x-2">
+            <li
+              className="px-4 py-2 hover:bg-gray-600 flex items-center space-x-2"
+              role="menuitem"
+            >
               <InformationCircleIcon className="h-5 w-5" />
-              <a href="/about">[a]bout</a>
+              <a href="/about" aria-label="Go to about page">
+                [a]bout
+              </a>
             </li>
-            <li className="px-4 py-2 hover:bg-gray-600">
-              <a href="/contact">[c]ontact</a>
+            <li className="px-4 py-2 hover:bg-gray-600" role="menuitem">
+              <a href="/contact" aria-label="Go to contact page">
+                [c]ontact
+              </a>
             </li>
           </ul>
         </nav>

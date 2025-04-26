@@ -91,10 +91,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4">
+    <div
+      className="flex min-h-screen flex-col items-center justify-center p-4"
+      role="main"
+      aria-labelledby="login-heading"
+    >
       <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-6 shadow-md">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1
+            id="login-heading"
+            className="text-2xl font-bold text-gray-900"
+            tabIndex={-1}
+          >
             Sign in to your account
           </h1>
           <p className="mt-2 text-sm text-gray-600">
@@ -102,13 +110,19 @@ export default function LoginPage() {
             <a
               href="/register"
               className="font-medium text-blue-600 hover:text-blue-500"
+              aria-label="Create a new account"
             >
               create a new account
             </a>
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} ref={formRef} className="mt-8 space-y-6">
+        <form
+          onSubmit={handleSubmit}
+          ref={formRef}
+          className="mt-8 space-y-6"
+          aria-describedby="error-message"
+        >
           <div className="-space-y-px rounded-md shadow-sm">
             <div>
               <label htmlFor="email" className="sr-only">
@@ -127,6 +141,7 @@ export default function LoginPage() {
                 }
                 className="relative block w-full rounded-t-md border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
                 placeholder="Email address"
+                aria-required="true"
               />
             </div>
             <div>
@@ -145,12 +160,19 @@ export default function LoginPage() {
                 }
                 className="relative block w-full rounded-t-md border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
                 placeholder="Password"
+                aria-required="true"
               />
             </div>
           </div>
 
           {errorMessage && (
-            <p className="mt-2 text-sm text-red-600">{errorMessage}</p>
+            <p
+              id="error-message"
+              className="mt-2 text-sm text-red-600"
+              role="alert"
+            >
+              {errorMessage}
+            </p>
           )}
 
           <div className="flex items-center justify-between">
@@ -160,8 +182,10 @@ export default function LoginPage() {
                 name="remember-me"
                 type="checkbox"
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                aria-describedby="remember-me-label"
               />
               <label
+                id="remember-me-label"
                 htmlFor="remember-me"
                 className="ml-2 block text-sm text-gray-900"
               >
@@ -173,6 +197,7 @@ export default function LoginPage() {
               <a
                 href="#"
                 className="font-medium text-blue-600 hover:text-blue-500"
+                aria-label="Forgot your password?"
               >
                 Forgot your password?
               </a>
@@ -183,6 +208,7 @@ export default function LoginPage() {
             <button
               type="submit"
               className="group relative flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              aria-label="Sign in to your account"
             >
               Sign in
             </button>
