@@ -2,7 +2,6 @@
 
 ## TODO
 
-- [ ] Frontend: apply Aria for accessibility
 - [ ] Add E2E tests
 
 ## Keyboard Mapping
@@ -21,7 +20,7 @@
 | `=` or `+`                  | Header   | Toggle the menu                     |
 | `Escape`                    | Login    | Navigate back to the home page      |
 | `Ctrl+Enter` or `Cmd+Enter` | Login    | Submit the login form               |
-| `Escape`                    | Register | Navigat                             |
+| `Escape`                    | Register | Navigate                             |
 | `j` or `ArrowDown`          | App      | Move selection down                 |
 | `k` or `ArrowUp`            | App      | Move selection up                   |
 | `Enter` or `e`              | App      | Edit the selected goal              |
@@ -30,3 +29,19 @@
 | `l`                         | App      | Login/logout                        |
 | `m`                         | App      | Show modal                          |
 | `Escape`                    | App      | Cancel selection and close modal    |
+
+## Available NPM Scripts
+
+From the root directory, you can run the following commands:
+
+- `npm run start:api` - Starts the API server
+- `npm run start:swagger` - Starts the Swagger UI documentation server
+- `npm start` - Starts both the API and Swagger UI servers concurrently
+- `npm run install:all` - Installs dependencies for all parts of the project (root, server, and swagger-ui)
+- `npm test` - Runs the API tests
+
+## Project Structure
+
+- `server/` - Backend API implementation
+- `swagger-ui/` - API documentation server
+- `openapi.json` - OpenAPI specification for the API
