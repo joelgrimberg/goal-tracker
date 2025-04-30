@@ -36,7 +36,7 @@ const usersPlugin = {
       server.route([
         {
           method: "GET",
-          path: "/user/{userId}/drafts",
+          path: "/user/{userId}",
           handler: getDraftsByUserHandler,
         },
       ]);
