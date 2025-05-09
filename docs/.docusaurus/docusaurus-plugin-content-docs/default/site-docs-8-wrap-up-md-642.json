@@ -1,0 +1,23 @@
+{
+  "id": "wrap-up",
+  "title": "Wrap Up",
+  "description": "Have a plan",
+  "source": "@site/docs/8-wrap-up.md",
+  "sourceDirName": ".",
+  "slug": "/wrap-up",
+  "permalink": "/goaltracker/wrap-up",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/joelgrimberg/goaltracker/tree/main/docs/8-wrap-up.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 8,
+  "frontMatter": {
+    "sidebar_position": 8
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "SwaggerUI",
+    "permalink": "/goaltracker/apply"
+  }
+}

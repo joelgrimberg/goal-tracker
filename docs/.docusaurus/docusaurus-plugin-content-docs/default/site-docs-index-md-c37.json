@@ -1,0 +1,23 @@
+{
+  "id": "index",
+  "title": "API Testing: the basics",
+  "description": "API Testing Training Day Outline",
+  "source": "@site/docs/index.md",
+  "sourceDirName": ".",
+  "slug": "/",
+  "permalink": "/goaltracker/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/joelgrimberg/goaltracker/tree/main/docs/index.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 0,
+  "frontMatter": {
+    "sidebar_position": 0
+  },
+  "sidebar": "tutorialSidebar",
+  "next": {
+    "title": "Quickstart",
+    "permalink": "/goaltracker/quickstart"
+  }
+}

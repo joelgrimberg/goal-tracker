@@ -1,0 +1,23 @@
+{
+  "id": "start",
+  "title": "API Testing: the basics",
+  "description": "Introduction",
+  "source": "@site/docs/0-start.md",
+  "sourceDirName": ".",
+  "slug": "/start",
+  "permalink": "/goaltracker/start",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/joelgrimberg/goaltracker/tree/main/docs/0-start.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 0,
+  "frontMatter": {
+    "sidebar_position": 0
+  },
+  "sidebar": "tutorialSidebar",
+  "next": {
+    "title": "The basics of API testing",
+    "permalink": "/goaltracker/"
+  }
+}

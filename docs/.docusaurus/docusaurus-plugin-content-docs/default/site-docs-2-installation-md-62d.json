@@ -1,0 +1,27 @@
+{
+  "id": "installation",
+  "title": "Installation",
+  "description": "Frontend & Backend",
+  "source": "@site/docs/2-installation.md",
+  "sourceDirName": ".",
+  "slug": "/installation",
+  "permalink": "/goaltracker/installation",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/joelgrimberg/goaltracker/tree/main/docs/2-installation.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "sidebar_position": 2
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Quickstart",
+    "permalink": "/goaltracker/quickstart"
+  },
+  "next": {
+    "title": "Introduction",
+    "permalink": "/goaltracker/introduction"
+  }
+}

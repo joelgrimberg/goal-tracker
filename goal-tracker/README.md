@@ -1,36 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Readme Goal-Tracker
 
-## Getting Started
+## Keyboard Mapping
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Key                         | Page     | Effect                              |
+| --------------------------- | -------- | ----------------------------------- |
+| `s`                         | General  | Seed database                       |
+| `ArrowDown` or `j`          | About    | Move selection down                 |
+| `ArrowUp` or `k`            | About    | Move selection up                   |
+| `Enter`                     | About    | Open selected link or email         |
+| `Escape`                    | About    | Navigate back to the homepage       |
+| `e`                         | About    | Open the first email in the list    |
+| `t`                         | About    | Open the Twitter link in a new tab  |
+| `l`                         | About    | Open the LinkedIn link in a new tab |
+| `a`                         | Header   | Navigate to the About page          |
+| `=` or `+`                  | Header   | Toggle the menu                     |
+| `Escape`                    | Login    | Navigate back to the homepage       |
+| `Ctrl+Enter` or `Cmd+Enter` | Login    | Submit the login form               |
+| `Escape`                    | Register | Navigate                            |
+| `j` or `ArrowDown`          | App      | Move selection down                 |
+| `k` or `ArrowUp`            | App      | Move selection up                   |
+| `Enter` or `e`              | App      | Edit the selected goal              |
+| `i`                         | App      | Toggle info for the selected goal   |
+| `t`                         | App      | Delete the selected goal            |
+| `l`                         | App      | Login/logout                        |
+| `m`                         | App      | Show modal                          |
+| `Escape`                    | App      | Cancel selection and close modal    |

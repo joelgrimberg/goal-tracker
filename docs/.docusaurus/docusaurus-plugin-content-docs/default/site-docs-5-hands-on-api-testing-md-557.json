@@ -1,0 +1,27 @@
+{
+  "id": "hands-on-api-testing",
+  "title": "Hands-on API Testing",
+  "description": "Clone & Start Application (Vibe Coded)",
+  "source": "@site/docs/5-hands-on-api-testing.md",
+  "sourceDirName": ".",
+  "slug": "/hands-on-api-testing",
+  "permalink": "/goaltracker/hands-on-api-testing",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/joelgrimberg/goaltracker/tree/main/docs/5-hands-on-api-testing.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 5,
+  "frontMatter": {
+    "sidebar_position": 5
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "API Testing Tools",
+    "permalink": "/goaltracker/api-testing-tools"
+  },
+  "next": {
+    "title": "Test scenarios",
+    "permalink": "/goaltracker/testscenarios"
+  }
+}
