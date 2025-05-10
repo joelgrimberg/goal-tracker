@@ -1,10 +1,10 @@
 ---
-sidebar_position: 1
+sidebar_position: 4
 ---
 
 # An Introduction to API Testing
 
-This Training will provide a comprehensive introduction to API testing, covering
+This training will provide a comprehensive introduction to API testing, covering
 the fundamental concepts, tools, and practical applications.
 
 ## API Testing Training Day Outline

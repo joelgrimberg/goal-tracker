@@ -1,5 +1,7 @@
 # Goal Tracker (Vibe Coded)
 
+[![Deploy Documentation to GitHub Pages](https://github.com/joelgrimberg/goal-tracker/actions/workflows/deployDocumentation.yml/badge.svg?branch=main)](https://github.com/joelgrimberg/goal-tracker/actions/workflows/deployDocumentation.yml)
+
 ## Available NPM Scripts
 
 From the root directory, you can run the following commands:
@@ -14,10 +16,9 @@ From the root directory, you can run the following commands:
 
 ## Project Structure
 
-| Folder / File   | Port | Function                          |
-| --------------- | ---- | --------------------------------- |
-| `goal-tracker/` | 3000 | Frontend for the Goal Tracker     |
-| `server/`       | 3000 | Backend API implementation        |
-| `swagger-ui/`   | 3000 | API documentation server          |
-| `docs/`         | 3000 | Documentation for the training    |
-| `openapi.json`  | 3000 | OpenAPI specification for the API |
+| Folder / File   | Server / Port                      | Function                       |
+| --------------- | ---------------------------------- | ------------------------------ |
+| `goal-tracker/` | http://localhost:3001              | Frontend for the Goal Tracker  |
+| `server/`       | http://localhost:3000              | Backend API implementation     |
+| `swagger-ui/`   | http://localhost:3002/api-docs     | API documentation server       |
+| `docs/`         | http://localhost:3003/goal-tracker | Documentation for the training |
