@@ -24,7 +24,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "joelgrimberg", // Usually your GitHub org/user name.
-  projectName: "goaltracker", // Usually your repo name.
+  projectName: "goal-tracker", // Usually your repo name.
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -47,12 +47,25 @@ const config = {
           sidebarPath: "./sidebars.js",
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/joelgrimberg/goaltracker/tree/main/",
+          editUrl: "https://github.com/joelgrimberg/goal-tracker/tree/main/",
         },
         theme: {
           customCss: "./src/css/custom.css",
         },
       }),
+    ],
+  ],
+
+  plugins: [
+    [
+      "@docusaurus/plugin-ideal-image",
+      {
+        quality: 70,
+        max: 1030, // max resized image's size.
+        min: 640, // min resized image's size. if original is lower, use that size.
+        steps: 2, // the max number of images generated between min and max (inclusive)
+        disableInDev: true,
+      },
     ],
   ],
 
@@ -73,8 +86,9 @@ const config = {
           src: "images/square.png",
         },
         items: [
+          { type: "localeDropdown", position: "left" },
           {
-            href: "https://github.com/joelgrimberg/goaltracker",
+            href: "https://github.com/joelgrimberg/goal-tracker",
             label: "GitHub",
             position: "right",
           },
@@ -105,7 +119,7 @@ const config = {
               // },
               {
                 label: "GitHub Discussions",
-                href: "https://github.com/joelgrimberg/goaltracker/discussions",
+                href: "https://github.com/joelgrimberg/goal-tracker/discussions",
               },
             ],
           },
@@ -114,12 +128,12 @@ const config = {
             items: [
               {
                 label: "GitHub",
-                href: "https://github.com/joelgrimberg/goaltracker",
+                href: "https://github.com/joelgrimberg/goal-tracker",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Goaltracker. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Goal-tracker.`,
       },
       prism: {
         theme: prismThemes.github,
