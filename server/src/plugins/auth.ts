@@ -10,6 +10,12 @@ import { exec } from "child_process";
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 const UPLOADS_DIR = path.join(__dirname, "../../uploads/avatars");
 
+// Define the JWT payload type
+interface JWTPayload {
+  id: string;
+  email: string;
+}
+
 const authPlugin = {
   name: "app/auth",
   register: async function (server: Hapi.Server) {
@@ -180,8 +186,8 @@ const authPlugin = {
         path: "/auth/me",
         options: {
           cors: {
-            origin: ["http://localhost:3001"], // Allow requests from this origin
-            credentials: true, // Allow credentials
+            origin: ["http://localhost:3001"],
+            credentials: true,
           },
           pre: [
             {
@@ -206,6 +212,89 @@ const authPlugin = {
         handler: async (request, h) => {
           const user = request.pre.user;
           return h.response(user).code(200);
+        },
+      },
+      {
+        method: "PUT",
+        path: "/auth/profile",
+        options: {
+          cors: {
+            origin: ["http://localhost:3001"],
+            credentials: true,
+          },
+          pre: [
+            {
+              method: async (request, h) => {
+                const authorization = request.headers.authorization;
+                if (!authorization) {
+                  throw Boom.unauthorized("No authorization header");
+                }
+
+                const token = authorization.replace("Bearer ", "");
+                try {
+                  const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
+                  // Get the full user from the database
+                  const { prisma } = request.server.app;
+                  const user = await prisma.user.findUnique({
+                    where: { id: decoded.id }
+                  });
+                  if (!user) {
+                    throw Boom.unauthorized("User not found");
+                  }
+                  return user;
+                } catch (error) {
+                  if (error instanceof jwt.JsonWebTokenError) {
+                    throw Boom.unauthorized("Invalid token");
+                  }
+                  throw Boom.unauthorized("Authentication failed");
+                }
+              },
+              assign: "user",
+            },
+          ],
+        },
+        handler: async (request, h) => {
+          const { prisma } = request.server.app;
+          const user = request.pre.user;
+          const { name, email } = request.payload as any;
+
+          try {
+            // Check if email is already taken by another user
+            if (email && email !== user.email) {
+              const existingUser = await prisma.user.findFirst({
+                where: {
+                  email,
+                  id: { not: user.id }
+                }
+              });
+              if (existingUser) {
+                throw Boom.badRequest("Email already in use");
+              }
+            }
+
+            // Update user profile
+            const updatedUser = await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                name,
+                email,
+              },
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                avatarUrl: true,
+              }
+            });
+
+            return h.response(updatedUser).code(200);
+          } catch (error) {
+            console.error('Error updating profile:', error);
+            if (error instanceof Boom.Boom) {
+              throw error;
+            }
+            throw Boom.internal("Failed to update profile");
+          }
         },
       },
       {

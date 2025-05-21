@@ -91,6 +91,7 @@ async function signupHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
         name,
         email,
         avatarUrl,
+        password: '', // Add empty password for OAuth users
       },
     });
 
@@ -121,7 +122,7 @@ async function getDraftsByUserHandler(
 ) {
   const { prisma } = request.server.app;
 
-  const userId = Number(request.params.userId);
+  const userId = request.params.userId; // Remove Number() conversion since id is a string
   try {
     const drafts = await prisma.user.findUnique({
       where: { id: userId },

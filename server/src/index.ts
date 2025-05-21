@@ -4,23 +4,28 @@ import prisma from "./plugins/prisma";
 import users from "./plugins/users";
 import goals from "./plugins/goals";
 import auth from "./plugins/auth";
+import oauth from "./plugins/oauth";
 import Inert from "@hapi/inert";
 import path from "path";
 
-// Load environment variables from .env file
+// Load environment variables from .env.local first, then .env
+dotenv.config({ path: '.env.local' });
 dotenv.config();
 
 const server: Hapi.Server = Hapi.server({
   port: process.env.PORT || 3000,
   host: process.env.HOST || "localhost",
   routes: {
-    cors: true,
+    cors: {
+      origin: ["http://localhost:3001"],
+      credentials: true,
+    },
   },
 });
 
 export async function start(): Promise<Hapi.Server> {
   // Register all plugins, including the auth plugin
-  await server.register([prisma, users, goals, auth]);
+  await server.register([prisma, users, goals, auth, oauth]);
   await server.register(Inert);
 
   server.route({

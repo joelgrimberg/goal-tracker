@@ -4,34 +4,53 @@ sidebar_position: 3
 
 # Installation
 
-## Frontend & Backend
+## Prerequisites
 
-The application consists of a frontend service and a backend service. The
-frontend service is a React application that runs in the browser, while the
-backend service is a Javascript application that runs on a server. The two
-services communicate with each other over HTTP.
+Before you begin, ensure you have the following installed:
+- Node.js (v14 or higher)
+- npm (v6 or higher)
 
-Run the following script in your terminal to setup the Frontend:
+## Quick Installation
 
+The easiest way to install all components is to use the root-level installation script:
+
+```bash
+npm run install:all
+```
+
+This will install dependencies for:
+- Root project
+- Frontend application
+- Backend API
+- SwaggerUI documentation
+- Training documentation
+
+## Manual Installation
+
+If you prefer to install components individually, follow these steps:
+
+### Frontend
 ```bash
 cd goal-tracker
 npm install
 ```
 
-Run the following script in your terminal to setup the Backend:
-
+### Backend
 ```bash
 cd server
 npm install
 ```
 
-## SwaggerUI
-
-Run the following script in a new terminal to start the API documentation in
-SwaggerUI:
-
+### SwaggerUI
 ```bash
 cd swagger-ui
 npm install
-npm run start
 ```
+
+### Training Documentation
+```bash
+cd docs
+npm install
+```
+
+After installation is complete, you can proceed to the [Quickstart Guide](./1-quickstart) to run the application.

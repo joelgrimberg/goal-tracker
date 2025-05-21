@@ -17,6 +17,7 @@ export default function LoginPage() {
 
   const [formData, setFormData] = useState(initialState);
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
+  const [authMethod, setAuthMethod] = useState("jwt"); // Default to JWT
 
   // Add event listener for Escape key and Ctrl+Enter
   useEffect(() => {
@@ -48,7 +49,31 @@ export default function LoginPage() {
   // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage(""); // Clear any previous error messages
+    setErrorMessage("");
+
+    if (authMethod === "oauth") {
+      // Redirect to OAuth authorization endpoint
+      const clientId = process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID;
+      console.log('Environment variables:', {
+        NEXT_PUBLIC_OAUTH_CLIENT_ID: process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID,
+        NEXT_PUBLIC_OAUTH_REDIRECT_URI: process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URI
+      });
+      const redirectUri = encodeURIComponent(process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URI || "http://localhost:3001/oauth");
+      const scope = encodeURIComponent("read write");
+      const state = Math.random().toString(36).substring(7); // Generate random state
+      
+      // Store state in localStorage for verification
+      localStorage.setItem("oauth_state", state);
+      console.log('Stored OAuth state:', state);
+      
+      // Only include public parameters in the authorization URL
+      const authUrl = `http://localhost:3000/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`;
+      console.log('Redirecting to:', authUrl);
+      
+      // Redirect to OAuth authorization endpoint
+      window.location.href = authUrl;
+      return;
+    }
 
     try {
       console.log("Logging in with:", formData);
@@ -58,12 +83,11 @@ export default function LoginPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // Include cookies for cross-origin requests
+        credentials: "include",
         body: JSON.stringify(formData),
       });
 
       if (response.status === 401) {
-        // Set error message for invalid credentials
         setErrorMessage("Invalid email or password. Please try again.");
         return;
       }
@@ -72,16 +96,15 @@ export default function LoginPage() {
         throw new Error("Login failed");
       }
 
-      const data = await response.json(); // Assuming the server responds with { token: "JWT_TOKEN" }
+      const data = await response.json();
       const token = data.token;
 
-      // Store the token in localStorage (or use cookies for better security)
       localStorage.setItem("authToken", token);
       localStorage.setItem("userName", data.name);
       localStorage.setItem("userAvatar", data.avatar);
+      localStorage.setItem("authMethod", "jwt"); // Store the auth method
 
-      login(); // Call the login function from AuthContext to update the global state
-      // Redirect to the home page after successful login
+      login();
       router.push("/");
       router.refresh();
     } catch (error) {
@@ -117,103 +140,143 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          ref={formRef}
-          className="mt-8 space-y-6"
-          aria-describedby="error-message"
-        >
-          <div className="-space-y-px rounded-md shadow-sm">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                ref={emailInputRef} // Attach the ref to the email input
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className="relative block w-full rounded-t-md border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
-                placeholder="Email address"
-                aria-required="true"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                className="relative block w-full rounded-t-md border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
-                placeholder="Password"
-                aria-required="true"
-              />
-            </div>
-          </div>
+        {/* Authentication Method Selector */}
+        <div className="flex justify-center space-x-4 mb-6">
+          <button
+            type="button"
+            onClick={() => setAuthMethod("jwt")}
+            className={`px-4 py-2 rounded-md ${
+              authMethod === "jwt"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+          >
+            Email & Password
+          </button>
+          <button
+            type="button"
+            onClick={() => setAuthMethod("oauth")}
+            className={`px-4 py-2 rounded-md ${
+              authMethod === "oauth"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+          >
+            OAuth 2.0
+          </button>
+        </div>
 
-          {errorMessage && (
-            <p
-              id="error-message"
-              className="mt-2 text-sm text-red-600"
-              role="alert"
-            >
-              {errorMessage}
+        {authMethod === "jwt" ? (
+          <form
+            onSubmit={handleSubmit}
+            ref={formRef}
+            className="mt-8 space-y-6"
+            aria-describedby="error-message"
+          >
+            <div className="-space-y-px rounded-md shadow-sm">
+              <div>
+                <label htmlFor="email" className="sr-only">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  ref={emailInputRef} // Attach the ref to the email input
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  className="relative block w-full rounded-t-md border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
+                  placeholder="Email address"
+                  aria-required="true"
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="sr-only">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  className="relative block w-full rounded-t-md border-0 p-2 text-black ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 focus:text-black"
+                  placeholder="Password"
+                  aria-required="true"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                  aria-describedby="remember-me-label"
+                />
+                <label
+                  id="remember-me-label"
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-900"
+                >
+                  Remember me
+                </label>
+              </div>
+
+              <div className="text-sm">
+                <a
+                  href="#"
+                  className="font-medium text-blue-600 hover:text-blue-500"
+                  aria-label="Forgot your password?"
+                >
+                  Forgot your password?
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                className="group relative flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                aria-label="Sign in to your account"
+              >
+                Sign in
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="text-center">
+            <p className="text-gray-600 mb-4">
+              Click the button below to sign in with OAuth 2.0
             </p>
-          )}
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
-                aria-describedby="remember-me-label"
-              />
-              <label
-                id="remember-me-label"
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <a
-                href="#"
-                className="font-medium text-blue-600 hover:text-blue-500"
-                aria-label="Forgot your password?"
-              >
-                Forgot your password?
-              </a>
-            </div>
-          </div>
-
-          <div>
             <button
-              type="submit"
-              className="group relative flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-              aria-label="Sign in to your account"
+              onClick={handleSubmit}
+              className="w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
             >
-              Sign in
+              Continue with OAuth 2.0
             </button>
           </div>
-        </form>
+        )}
+
+        {errorMessage && (
+          <p
+            id="error-message"
+            className="mt-2 text-sm text-red-600"
+            role="alert"
+          >
+            {errorMessage}
+          </p>
+        )}
       </div>
     </div>
   );

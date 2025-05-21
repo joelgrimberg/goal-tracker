@@ -5,23 +5,25 @@ import {
   XMarkIcon,
   HomeIcon,
   InformationCircleIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
   const [menuVisible, setMenuVisible] = useState(false);
-  const [user, setUser] = useState(null); // State for user info
-  const [isClient, setIsClient] = useState(false); // State to check if rendering on the client
+  const [user, setUser] = useState(null);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
+  const { isLoggedIn, logout } = useAuth();
 
   const toggleMenu = () => {
     setMenuVisible((prev) => !prev);
   };
 
   useEffect(() => {
-    // Ensure this runs only on the client
     setIsClient(true);
 
     // Fetch user data from localStorage
@@ -51,6 +53,10 @@ export default function Header() {
       if (event.key === "a") {
         router.push("/about");
       }
+
+      if (event.key === "p") {
+        router.push("/profile");
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -59,6 +65,11 @@ export default function Header() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [router]);
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
 
   return (
     <header
@@ -71,7 +82,6 @@ export default function Header() {
         </Link>
       </div>
       <div className="flex items-center space-x-4">
-        {/* Ensure this only renders on the client */}
         {isClient && user?.avatar && (
           <img
             src={`http://localhost:3000${user.avatar}`}
@@ -122,6 +132,20 @@ export default function Header() {
                 [h]ome
               </Link>
             </li>
+            {isLoggedIn && (
+              <li
+                className="px-4 py-2 hover:bg-gray-600 flex items-center space-x-2"
+                role="menuitem"
+              >
+                <UserCircleIcon className="h-5 w-5" />
+                <Link
+                  href="/profile"
+                  aria-label="Go to profile settings"
+                >
+                  [p]rofile
+                </Link>
+              </li>
+            )}
             <li
               className="px-4 py-2 hover:bg-gray-600 flex items-center space-x-2"
               role="menuitem"
@@ -131,11 +155,19 @@ export default function Header() {
                 [a]bout
               </a>
             </li>
-            <li className="px-4 py-2 hover:bg-gray-600" role="menuitem">
-              <a href="/contact" aria-label="Go to contact page">
-                [c]ontact
-              </a>
-            </li>
+            {isLoggedIn && (
+              <li
+                className="px-4 py-2 hover:bg-gray-600"
+                role="menuitem"
+              >
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left"
+                >
+                  [l]ogout
+                </button>
+              </li>
+            )}
           </ul>
         </nav>
       )}

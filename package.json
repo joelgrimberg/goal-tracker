@@ -8,7 +8,10 @@
     "start:swagger": "cd swagger-ui && npm start",
     "start:docs": "cd docs && npm start",
     "start:all": "concurrently \"npm run start:frontend\" \"npm run start:api\" \"npm run start:swagger\" \"npm run start:docs\"",
-    "install:all": "npm install && cd goal-tracker && npm install && cd ../server && npm install && cd ../swagger-ui && npm install && cd .. && cd docs && npm install && cd .."
+    "install:all": "npm install && cd goal-tracker && npm install && cd ../server && npm install && cd ../swagger-ui && npm install && cd .. && cd docs && npm install && cd ..",
+    "install:app": "node server/scripts/install.js",
+    "dev": "concurrently \"cd server && npm run dev\" \"cd goal-tracker && npm run dev\"",
+    "start:with-config": "node scripts/start-with-config.js"
   },
   "dependencies": {
     "concurrently": "^8.2.2"
