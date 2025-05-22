@@ -198,33 +198,21 @@ async function deleteGoalHandler(
   }
 }
 
-async function createGoalHandler(
-  request: Hapi.Request,
-  h: Hapi.ResponseToolkit,
-) {
+async function createGoalHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
   const { prisma } = request.server.app;
+  const { title, description, targetDate, statusId } = request.payload as any;
 
-  const payload = request.payload as any;
-  console.log(payload);
   try {
-    const createdGoal = await prisma.goal.create({
+    const goal = await prisma.goal.create({
       data: {
-        title: payload.title,
-        description: payload.description,
-        status: payload.status,
-        targetDate: payload.targetDate,
-        tasks: payload.tasks
-          ? {
-              create: payload.tasks.map((task: any) => ({
-                title: task.title,
-                description: task.description,
-                status: task.status,
-              })),
-            }
-          : undefined,
+        title,
+        description,
+        targetDate: new Date(targetDate),
+        statusId: statusId || 1, // Default to statusId 1 if not provided
       },
     });
-    return h.response(createdGoal).code(201);
+
+    return h.response(goal).code(201);
   } catch (err) {
     console.log(err);
     return h.response({ error: "Failed to create goal" }).code(500);

@@ -14,10 +14,9 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
   const [menuVisible, setMenuVisible] = useState(false);
-  const [user, setUser] = useState(null);
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, user } = useAuth();
 
   const toggleMenu = () => {
     setMenuVisible((prev) => !prev);
@@ -25,13 +24,6 @@ export default function Header() {
 
   useEffect(() => {
     setIsClient(true);
-
-    // Fetch user data from localStorage
-    const name = localStorage.getItem("userName");
-    const avatar = localStorage.getItem("userAvatar");
-    if (name || avatar) {
-      setUser({ name, avatar });
-    }
   }, []);
 
   useEffect(() => {
@@ -48,6 +40,10 @@ export default function Header() {
 
       if (event.key === "=" || event.key === "+") {
         toggleMenu();
+      }
+
+      if (event.key === "h") {
+        router.push("/");
       }
 
       if (event.key === "a") {
@@ -84,9 +80,9 @@ export default function Header() {
       <div className="flex items-center space-x-4">
         {isClient && user?.avatar && (
           <img
-            src={`http://localhost:3000${user.avatar}`}
+            src={user.avatar.startsWith('http') ? user.avatar : `http://localhost:3000${user.avatar}`}
             alt="User Avatar"
-            className="w-10 h-10 rounded-full"
+            className="w-10 h-10 rounded-full object-cover"
           />
         )}
         {isClient && user?.name && (
@@ -132,17 +128,43 @@ export default function Header() {
                 [h]ome
               </Link>
             </li>
-            {isLoggedIn && (
+            {isLoggedIn ? (
+              <>
+                <li
+                  className="px-4 py-2 hover:bg-gray-600 flex items-center space-x-2"
+                  role="menuitem"
+                >
+                  <UserCircleIcon className="h-5 w-5" />
+                  <Link
+                    href="/profile"
+                    aria-label="Go to profile settings"
+                  >
+                    [p]rofile
+                  </Link>
+                </li>
+                <li
+                  className="px-4 py-2 hover:bg-gray-600"
+                  role="menuitem"
+                >
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left"
+                  >
+                    [l]ogout
+                  </button>
+                </li>
+              </>
+            ) : (
               <li
                 className="px-4 py-2 hover:bg-gray-600 flex items-center space-x-2"
                 role="menuitem"
               >
                 <UserCircleIcon className="h-5 w-5" />
                 <Link
-                  href="/profile"
-                  aria-label="Go to profile settings"
+                  href="/login"
+                  aria-label="Go to login page"
                 >
-                  [p]rofile
+                  [l]ogin
                 </Link>
               </li>
             )}
@@ -155,19 +177,6 @@ export default function Header() {
                 [a]bout
               </a>
             </li>
-            {isLoggedIn && (
-              <li
-                className="px-4 py-2 hover:bg-gray-600"
-                role="menuitem"
-              >
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left"
-                >
-                  [l]ogout
-                </button>
-              </li>
-            )}
           </ul>
         </nav>
       )}

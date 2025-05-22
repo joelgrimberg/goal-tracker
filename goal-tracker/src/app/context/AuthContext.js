@@ -5,8 +5,9 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authMethod, setAuthMethod] = useState(null);
+  const [user, setUser] = useState(null);
 
-  // Check for token on app load
+  // Check for token and user data on app load
   useEffect(() => {
     const storedAuthMethod = localStorage.getItem("authMethod");
     const token = storedAuthMethod === "oauth" 
@@ -16,6 +17,13 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       setIsLoggedIn(true);
       setAuthMethod(storedAuthMethod);
+      
+      // Set user data
+      const name = localStorage.getItem("userName");
+      const avatar = localStorage.getItem("userAvatar");
+      if (name || avatar) {
+        setUser({ name, avatar });
+      }
     }
   }, []);
 
@@ -23,6 +31,13 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(true);
     const storedAuthMethod = localStorage.getItem("authMethod");
     setAuthMethod(storedAuthMethod);
+    
+    // Update user data
+    const name = localStorage.getItem("userName");
+    const avatar = localStorage.getItem("userAvatar");
+    if (name || avatar) {
+      setUser({ name, avatar });
+    }
   };
 
   const logout = () => {
@@ -37,6 +52,7 @@ export const AuthProvider = ({ children }) => {
     
     setIsLoggedIn(false);
     setAuthMethod(null);
+    setUser(null);
     window.location.reload();
   };
 
@@ -138,7 +154,9 @@ export const AuthProvider = ({ children }) => {
         logout, 
         authMethod,
         getAuthToken,
-        refreshOAuthToken 
+        refreshOAuthToken,
+        user,
+        setUser
       }}
     >
       {children}

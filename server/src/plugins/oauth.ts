@@ -339,7 +339,7 @@ const oauthPlugin = {
                   id: user.id,
                   name: user.name,
                   email: user.email,
-                  avatar: user.avatarUrl
+                  avatar: user.avatarUrl || '/uploads/avatars/mugshot.png'
                 }
               });
             } catch (error: unknown) {
@@ -394,7 +394,7 @@ const oauthPlugin = {
                   id: user.id,
                   name: user.name,
                   email: user.email,
-                  avatar: user.avatarUrl
+                  avatar: user.avatarUrl || '/uploads/avatars/mugshot.png'
                 }
               });
             } catch (error) {

@@ -5,9 +5,11 @@ import Todos from "./components/todos";
 import { useAuth } from "./context/AuthContext"; // Import the useAuth hook
 
 const fetcher = (url) => fetch(url).then((r) => r.json());
+const ITEMS_PER_PAGE = 10;
 
 export default function Home() {
   const [menuVisible, setMenuVisible] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
@@ -21,6 +23,12 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false);
 
   const { isLoggedIn, logout } = useAuth(); // Access login state and logout function from AuthContext
+
+  // Calculate pagination
+  const totalPages = data ? Math.ceil(data.length / ITEMS_PER_PAGE) : 0;
+  const startIndex = currentPage * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentGoals = data ? data.slice(startIndex, endIndex) : [];
 
   const handleDelete = async () => {
     const confirmed = window.confirm(
@@ -72,19 +80,37 @@ export default function Home() {
         window.location.href =
           "http://localhost:3001/goal/edit?id=" + data[selectedRow].id;
       } else if (event.key === "ArrowDown" || event.key === "j") {
-        setSelectedRow((prev) => (prev < data.length - 1 ? prev + 1 : 0));
+        setSelectedRow((prev) => {
+          const newRow = prev < currentGoals.length - 1 ? prev + 1 : 0;
+          // If we're at the end of the current page and there's a next page, go to it
+          if (newRow === 0 && currentPage < totalPages - 1) {
+            setCurrentPage(prev => prev + 1);
+          }
+          return newRow;
+        });
         setHoverText("");
       } else if (event.key === "ArrowUp" || event.key === "k") {
-        if (selectedRow === -1) {
-          setSelectedRow(data.length - 1);
-        } else {
-          setSelectedRow((prev) => (prev > 0 ? prev - 1 : data.length - 1));
-        }
+        setSelectedRow((prev) => {
+          if (prev === -1) {
+            return currentGoals.length - 1;
+          }
+          const newRow = prev > 0 ? prev - 1 : currentGoals.length - 1;
+          // If we're at the start of the current page and there's a previous page, go to it
+          if (newRow === currentGoals.length - 1 && currentPage > 0) {
+            setCurrentPage(prev => prev - 1);
+          }
+          return newRow;
+        });
         setHoverText("");
+      } else if (event.key === "ArrowRight" && currentPage < totalPages - 1) {
+        setCurrentPage(prev => prev + 1);
+        setSelectedRow(0);
+      } else if (event.key === "ArrowLeft" && currentPage > 0) {
+        setCurrentPage(prev => prev - 1);
+        setSelectedRow(0);
       } else if (event.key === "i" && selectedRow !== -1) {
-        setHoverText((prev) => (prev ? "" : data[selectedRow].description));
-      }
-      if (event.key === "m") {
+        setHoverText((prev) => (prev ? "" : currentGoals[selectedRow].description));
+      } else if (event.key === "m") {
         setShowModal(true);
       } else if (event.key === "Escape") {
         setSelectedRow(-1);
@@ -99,7 +125,7 @@ export default function Home() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [data, selectedRow, isLoggedIn, logout, handleDelete]);
+  }, [data, selectedRow, isLoggedIn, logout, handleDelete, currentPage, currentGoals, totalPages]);
 
   const handleRowHover = (index) => {
     setSelectedRow(index);
@@ -135,7 +161,7 @@ export default function Home() {
               </tr>
             </thead>
             <tbody onMouseLeave={() => clearState()}>
-              {data.map((goal, index) => (
+              {currentGoals.map((goal, index) => (
                 <tr
                   key={goal.id}
                   role="row"
@@ -172,11 +198,15 @@ export default function Home() {
                   <p>
                     <kbd>j</kbd>/<kbd>↓</kbd> down <br />
                     <kbd>k</kbd>/<kbd>↑</kbd> up <br />
+                    <kbd>←</kbd>/<kbd>→</kbd> previous/next page <br />
                     <kbd>i</kbd> info <br />
                     <kbd>e</kbd> edit <br />
                     <kbd>t</kbd> trash <br />
                     <kbd>l</kbd> login/logout <br />
                     <kbd>esc</kbd> cancel <br />
+                  </p>
+                  <p className="mt-2">
+                    Page {currentPage + 1} of {totalPages}
                   </p>
                 </td>
               </tr>

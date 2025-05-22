@@ -223,7 +223,206 @@ const goalData: Prisma.GoalCreateInput[] = [
       ],
     },
   },
-  // Add 20 more goals in the same format, each with unique titles, descriptions, and tasks
+  {
+    title: "Learn Helm Charts",
+    description: "Master Kubernetes package management with Helm Charts. Learn to create, manage, and deploy applications using Helm.",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2024-12-31"),
+    tasks: {
+      create: [
+        {
+          title: "Install Helm",
+          description: "Set up Helm on your local machine and cluster",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Create your first chart",
+          description: "Build a basic Helm chart for a simple application",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Master C++ Programming",
+    description: "Deep dive into C++ programming. Focus on modern C++ features, memory management, and performance optimization.",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2024-12-31"),
+    tasks: {
+      create: [
+        {
+          title: "Study modern C++ features",
+          description: "Learn about C++11, C++14, C++17, and C++20 features",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Practice memory management",
+          description: "Implement smart pointers and RAII patterns",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Learn Rust Programming",
+    description: "Learn Rust programming language. Focus on memory safety, concurrency, and building high-performance applications.",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2024-12-31"),
+    tasks: {
+      create: [
+        {
+          title: "Complete Rust book",
+          description: "Go through the official Rust programming book",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Build a CLI tool",
+          description: "Create a command-line tool using Rust",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Master Docker and Containerization",
+    description: "Become proficient in Docker and containerization. Learn best practices for building, deploying, and managing containers.",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2024-12-31"),
+    tasks: {
+      create: [
+        {
+          title: "Learn Docker basics",
+          description: "Understand Docker images, containers, and volumes",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Create multi-stage builds",
+          description: "Implement efficient multi-stage Docker builds",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Learn GraphQL",
+    description: "Master GraphQL API development. Learn to design and implement efficient GraphQL schemas and resolvers.",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2024-12-31"),
+    tasks: {
+      create: [
+        {
+          title: "Study GraphQL schema design",
+          description: "Learn about types, queries, mutations, and subscriptions",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Build a GraphQL API",
+          description: "Create a GraphQL API with proper resolvers",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Master TypeScript",
+    description: "Deep dive into TypeScript. Learn advanced types, decorators, and best practices for large-scale applications.",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2024-12-31"),
+    tasks: {
+      create: [
+        {
+          title: "Study advanced types",
+          description: "Learn about generics, utility types, and type inference",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Implement decorators",
+          description: "Create and use TypeScript decorators",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Learn AWS Cloud Services",
+    description: "Master AWS cloud services. Focus on EC2, S3, Lambda, and other core AWS services.",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2024-12-31"),
+    tasks: {
+      create: [
+        {
+          title: "Set up AWS account",
+          description: "Create and configure an AWS account with proper IAM roles",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Deploy a serverless application",
+          description: "Build and deploy an application using AWS Lambda and API Gateway",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Master React Native",
+    description: "Learn to build cross-platform mobile applications with React Native. Focus on performance and native features.",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2024-12-31"),
+    tasks: {
+      create: [
+        {
+          title: "Set up development environment",
+          description: "Install and configure React Native development tools",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Build a mobile app",
+          description: "Create a cross-platform mobile application",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Learn Machine Learning Basics",
+    description: "Introduction to machine learning concepts. Focus on supervised and unsupervised learning algorithms.",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2024-12-31"),
+    tasks: {
+      create: [
+        {
+          title: "Study ML fundamentals",
+          description: "Learn about different types of machine learning algorithms",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Implement a simple model",
+          description: "Build and train a basic machine learning model",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Master Git Advanced Features",
+    description: "Deep dive into Git. Learn advanced branching strategies, rebasing, and Git workflows.",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2024-12-31"),
+    tasks: {
+      create: [
+        {
+          title: "Learn Git internals",
+          description: "Understand how Git works under the hood",
+          status: { connect: { id: 1 } },
+        },
+        {
+          title: "Practice advanced workflows",
+          description: "Implement GitFlow and other branching strategies",
+          status: { connect: { id: 1 } },
+        },
+      ],
+    },
+  },
 ];
 
 const userData: Prisma.UserCreateInput[] = [
