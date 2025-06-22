@@ -83,6 +83,9 @@ export default function Home() {
           "http://localhost:3001/goal/edit?id=" + currentGoals[selectedRow].id;
       } else if (event.key === "ArrowDown" || event.key === "j") {
         setSelectedRow((prev) => {
+          if (prev === -1) {
+            return 0;
+          }
           const newRow = prev < currentGoals.length - 1 ? prev + 1 : 0;
           // If we're at the end of the current page and there's a next page, go to it
           if (newRow === 0 && currentPage < totalPages - 1) {
