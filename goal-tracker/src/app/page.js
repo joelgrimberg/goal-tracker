@@ -1,6 +1,6 @@
 "use client";
 import useSWR from "swr";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Todos from "./components/todos";
 import { useAuth } from "./context/AuthContext"; // Import the useAuth hook
 
@@ -30,12 +30,14 @@ export default function Home() {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentGoals = data ? data.slice(startIndex, endIndex) : [];
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
+    if (selectedRow === -1 || !data || !currentGoals[selectedRow]) return;
+    
     const confirmed = window.confirm(
       "Are you sure you want to delete this goal?",
     );
     if (confirmed) {
-      const goalId = data[selectedRow].id;
+      const goalId = currentGoals[selectedRow].id;
       try {
         const response = await fetch(`http://localhost:3000/goal/${goalId}`, {
           method: "DELETE",
@@ -50,7 +52,7 @@ export default function Home() {
         console.error("Error deleting the goal:", error);
       }
     }
-  };
+  }, [selectedRow, data, currentGoals]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -65,7 +67,7 @@ export default function Home() {
         return;
       }
 
-      if (!data) return;
+      if (!data || data.length === 0) return;
 
       if (event.key === "l") {
         if (isLoggedIn) {
@@ -78,7 +80,7 @@ export default function Home() {
         selectedRow !== -1
       ) {
         window.location.href =
-          "http://localhost:3001/goal/edit?id=" + data[selectedRow].id;
+          "http://localhost:3001/goal/edit?id=" + currentGoals[selectedRow].id;
       } else if (event.key === "ArrowDown" || event.key === "j") {
         setSelectedRow((prev) => {
           const newRow = prev < currentGoals.length - 1 ? prev + 1 : 0;
@@ -117,7 +119,7 @@ export default function Home() {
         setHoverText("");
         setShowModal(false);
       } else if (event.key === "t" && selectedRow !== -1) {
-        handleDelete(selectedRow);
+        handleDelete();
       }
     };
 
@@ -126,6 +128,13 @@ export default function Home() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [data, selectedRow, isLoggedIn, logout, handleDelete, currentPage, currentGoals, totalPages]);
+
+  // Reset selectedRow when currentGoals changes (pagination)
+  useEffect(() => {
+    if (selectedRow >= currentGoals.length) {
+      setSelectedRow(currentGoals.length > 0 ? 0 : -1);
+    }
+  }, [currentGoals, selectedRow]);
 
   const handleRowHover = (index) => {
     setSelectedRow(index);

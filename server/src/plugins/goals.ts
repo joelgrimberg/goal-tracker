@@ -37,14 +37,6 @@ const goalsPlugin = {
 
     server.route([
       {
-        method: "PUT",
-        path: "/publish/goals/{goalId}",
-        handler: togglePublishHandler,
-      },
-    ]);
-
-    server.route([
-      {
         method: "DELETE",
         path: "/goal/{goalId}",
         handler: deleteGoalHandler,
@@ -141,33 +133,6 @@ async function getGoalHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
         error: `Goal with ID ${goalId} does not exist in the database`,
       })
       .code(404);
-  }
-}
-
-async function togglePublishHandler(
-  request: Hapi.Request,
-  h: Hapi.ResponseToolkit,
-) {
-  const { prisma } = request.server.app;
-
-  const goalId = Number(request.params.goalId);
-
-  try {
-    const goalData = await prisma.goal.findUnique({
-      where: { id: goalId },
-    });
-
-    const updatedGoal = await prisma.goal.update({
-      where: { id: goalId || undefined },
-      data: { description: goalData?.description || "" },
-    });
-
-    return h.response(updatedGoal || undefined).code(201);
-  } catch (err) {
-    console.log(err);
-    return h.response({
-      error: `Goal with ID ${goalId} does not exist in the database`,
-    });
   }
 }
 

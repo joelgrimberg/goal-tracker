@@ -40,6 +40,13 @@ const usersPlugin = {
           handler: getDraftsByUserHandler,
         },
       ]);
+    server.route([
+      {
+        method: "DELETE",
+        path: "/user/{userId}",
+        handler: deleteUserHandler,
+      },
+    ]);
   },
 };
 
@@ -131,5 +138,39 @@ async function getDraftsByUserHandler(
     return h.response(drafts || undefined).code(200);
   } catch (err) {
     console.log(err);
+  }
+}
+
+async function deleteUserHandler(
+  request: Hapi.Request,
+  h: Hapi.ResponseToolkit,
+) {
+  const { prisma } = request.server.app;
+  const userId = request.params.userId;
+
+  try {
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) {
+      return h.response({ error: "User not found" }).code(404);
+    }
+
+    // Delete user's OAuth clients
+    await prisma.oAuthClient.deleteMany({
+      where: { userId: userId }
+    });
+
+    // Delete the user
+    await prisma.user.delete({
+      where: { id: userId }
+    });
+
+    return h.response({ message: "User and all associated data deleted successfully" }).code(200);
+  } catch (err) {
+    console.error(err);
+    return h.response({ error: "Failed to delete user" }).code(500);
   }
 }

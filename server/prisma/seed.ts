@@ -1,4 +1,5 @@
 import { PrismaClient, Prisma } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -223,201 +224,202 @@ const goalData: Prisma.GoalCreateInput[] = [
       ],
     },
   },
+  // Add 20 more goals in the same format, each with unique titles, descriptions, and tasks
   {
-    title: "Learn Helm Charts",
-    description: "Master Kubernetes package management with Helm Charts. Learn to create, manage, and deploy applications using Helm.",
+    title: "Learn Serverless Architecture",
+    description: "Understand serverless computing and its implementation patterns",
     status: { connect: { id: 1 } },
-    targetDate: new Date("2024-12-31"),
+    targetDate: new Date("2025-11-15"),
     tasks: {
       create: [
         {
-          title: "Install Helm",
-          description: "Set up Helm on your local machine and cluster",
+          title: "Study serverless concepts",
+          description: "Learn about FaaS, BaaS, and serverless architecture patterns",
           status: { connect: { id: 1 } },
         },
         {
-          title: "Create your first chart",
-          description: "Build a basic Helm chart for a simple application",
+          title: "Build a serverless function",
+          description: "Create and deploy a simple serverless function",
           status: { connect: { id: 1 } },
         },
       ],
     },
   },
   {
-    title: "Master C++ Programming",
-    description: "Deep dive into C++ programming. Focus on modern C++ features, memory management, and performance optimization.",
-    status: { connect: { id: 1 } },
-    targetDate: new Date("2024-12-31"),
+    title: "Learn Microservices Design",
+    description: "Master the principles and patterns of microservices architecture",
+    status: { connect: { id: 2 } },
+    targetDate: new Date("2025-12-15"),
     tasks: {
       create: [
         {
-          title: "Study modern C++ features",
-          description: "Learn about C++11, C++14, C++17, and C++20 features",
+          title: "Read microservices patterns",
+          description: "Study common microservices design patterns and anti-patterns",
           status: { connect: { id: 1 } },
         },
         {
-          title: "Practice memory management",
-          description: "Implement smart pointers and RAII patterns",
+          title: "Design a microservices system",
+          description: "Create a design for a sample microservices application",
           status: { connect: { id: 1 } },
         },
       ],
     },
   },
   {
-    title: "Learn Rust Programming",
-    description: "Learn Rust programming language. Focus on memory safety, concurrency, and building high-performance applications.",
-    status: { connect: { id: 1 } },
-    targetDate: new Date("2024-12-31"),
+    title: "Learn Event-Driven Architecture",
+    description: "Understand event-driven systems and message queuing",
+    status: { connect: { id: 3 } },
+    targetDate: new Date("2026-01-15"),
     tasks: {
       create: [
         {
-          title: "Complete Rust book",
-          description: "Go through the official Rust programming book",
+          title: "Study event sourcing",
+          description: "Learn about event sourcing and CQRS patterns",
           status: { connect: { id: 1 } },
         },
         {
-          title: "Build a CLI tool",
-          description: "Create a command-line tool using Rust",
+          title: "Implement an event bus",
+          description: "Build a simple event-driven system with message queuing",
           status: { connect: { id: 1 } },
         },
       ],
     },
   },
   {
-    title: "Master Docker and Containerization",
-    description: "Become proficient in Docker and containerization. Learn best practices for building, deploying, and managing containers.",
+    title: "Learn Database Sharding",
+    description: "Understand horizontal partitioning and database scaling strategies",
     status: { connect: { id: 1 } },
-    targetDate: new Date("2024-12-31"),
+    targetDate: new Date("2026-02-15"),
     tasks: {
       create: [
         {
-          title: "Learn Docker basics",
-          description: "Understand Docker images, containers, and volumes",
+          title: "Study sharding strategies",
+          description: "Learn about different database sharding approaches",
           status: { connect: { id: 1 } },
         },
         {
-          title: "Create multi-stage builds",
-          description: "Implement efficient multi-stage Docker builds",
+          title: "Design a sharded schema",
+          description: "Create a database schema that supports horizontal sharding",
           status: { connect: { id: 1 } },
         },
       ],
     },
   },
   {
-    title: "Learn GraphQL",
-    description: "Master GraphQL API development. Learn to design and implement efficient GraphQL schemas and resolvers.",
-    status: { connect: { id: 1 } },
-    targetDate: new Date("2024-12-31"),
+    title: "Learn API Gateway Patterns",
+    description: "Master API gateway design and implementation",
+    status: { connect: { id: 2 } },
+    targetDate: new Date("2026-03-15"),
     tasks: {
       create: [
         {
-          title: "Study GraphQL schema design",
-          description: "Learn about types, queries, mutations, and subscriptions",
+          title: "Study API gateway features",
+          description: "Learn about routing, authentication, rate limiting, and monitoring",
           status: { connect: { id: 1 } },
         },
         {
-          title: "Build a GraphQL API",
-          description: "Create a GraphQL API with proper resolvers",
+          title: "Build a simple API gateway",
+          description: "Implement basic API gateway functionality",
           status: { connect: { id: 1 } },
         },
       ],
     },
   },
   {
-    title: "Master TypeScript",
-    description: "Deep dive into TypeScript. Learn advanced types, decorators, and best practices for large-scale applications.",
-    status: { connect: { id: 1 } },
-    targetDate: new Date("2024-12-31"),
+    title: "Learn Distributed Tracing",
+    description: "Understand observability and distributed system monitoring",
+    status: { connect: { id: 3 } },
+    targetDate: new Date("2026-04-15"),
     tasks: {
       create: [
         {
-          title: "Study advanced types",
-          description: "Learn about generics, utility types, and type inference",
+          title: "Study tracing concepts",
+          description: "Learn about spans, traces, and correlation IDs",
           status: { connect: { id: 1 } },
         },
         {
-          title: "Implement decorators",
-          description: "Create and use TypeScript decorators",
+          title: "Implement tracing",
+          description: "Add distributed tracing to a sample application",
           status: { connect: { id: 1 } },
         },
       ],
     },
   },
   {
-    title: "Learn AWS Cloud Services",
-    description: "Master AWS cloud services. Focus on EC2, S3, Lambda, and other core AWS services.",
-    status: { connect: { id: 1 } },
-    targetDate: new Date("2024-12-31"),
+    title: "Learn Circuit Breaker Pattern",
+    description: "Understand fault tolerance and resilience patterns",
+    status: { connect: { id: 4 } },
+    targetDate: new Date("2026-05-15"),
     tasks: {
       create: [
         {
-          title: "Set up AWS account",
-          description: "Create and configure an AWS account with proper IAM roles",
+          title: "Study circuit breaker states",
+          description: "Learn about closed, open, and half-open states",
+          status: { connect: { id: 4 } },
+        },
+        {
+          title: "Implement circuit breaker",
+          description: "Build a circuit breaker pattern implementation",
+          status: { connect: { id: 4 } },
+        },
+      ],
+    },
+  },
+  {
+    title: "Learn Caching Strategies",
+    description: "Master different caching approaches and their trade-offs",
+    status: { connect: { id: 1 } },
+    targetDate: new Date("2026-06-15"),
+    tasks: {
+      create: [
+        {
+          title: "Study cache patterns",
+          description: "Learn about cache-aside, write-through, and write-behind patterns",
           status: { connect: { id: 1 } },
         },
         {
-          title: "Deploy a serverless application",
-          description: "Build and deploy an application using AWS Lambda and API Gateway",
+          title: "Implement caching",
+          description: "Add caching to a sample application",
           status: { connect: { id: 1 } },
         },
       ],
     },
   },
   {
-    title: "Master React Native",
-    description: "Learn to build cross-platform mobile applications with React Native. Focus on performance and native features.",
-    status: { connect: { id: 1 } },
-    targetDate: new Date("2024-12-31"),
+    title: "Learn Load Balancing",
+    description: "Understand load balancing algorithms and strategies",
+    status: { connect: { id: 2 } },
+    targetDate: new Date("2026-07-15"),
     tasks: {
       create: [
         {
-          title: "Set up development environment",
-          description: "Install and configure React Native development tools",
+          title: "Study load balancing algorithms",
+          description: "Learn about round-robin, least connections, and weighted algorithms",
           status: { connect: { id: 1 } },
         },
         {
-          title: "Build a mobile app",
-          description: "Create a cross-platform mobile application",
+          title: "Configure a load balancer",
+          description: "Set up and configure a load balancer for a sample application",
           status: { connect: { id: 1 } },
         },
       ],
     },
   },
   {
-    title: "Learn Machine Learning Basics",
-    description: "Introduction to machine learning concepts. Focus on supervised and unsupervised learning algorithms.",
-    status: { connect: { id: 1 } },
-    targetDate: new Date("2024-12-31"),
+    title: "Learn Blue-Green Deployment",
+    description: "Master zero-downtime deployment strategies",
+    status: { connect: { id: 3 } },
+    targetDate: new Date("2026-08-15"),
     tasks: {
       create: [
         {
-          title: "Study ML fundamentals",
-          description: "Learn about different types of machine learning algorithms",
+          title: "Study deployment strategies",
+          description: "Learn about blue-green, canary, and rolling deployments",
           status: { connect: { id: 1 } },
         },
         {
-          title: "Implement a simple model",
-          description: "Build and train a basic machine learning model",
-          status: { connect: { id: 1 } },
-        },
-      ],
-    },
-  },
-  {
-    title: "Master Git Advanced Features",
-    description: "Deep dive into Git. Learn advanced branching strategies, rebasing, and Git workflows.",
-    status: { connect: { id: 1 } },
-    targetDate: new Date("2024-12-31"),
-    tasks: {
-      create: [
-        {
-          title: "Learn Git internals",
-          description: "Understand how Git works under the hood",
-          status: { connect: { id: 1 } },
-        },
-        {
-          title: "Practice advanced workflows",
-          description: "Implement GitFlow and other branching strategies",
+          title: "Implement blue-green deployment",
+          description: "Set up a blue-green deployment pipeline",
           status: { connect: { id: 1 } },
         },
       ],
@@ -425,21 +427,21 @@ const goalData: Prisma.GoalCreateInput[] = [
   },
 ];
 
-const userData: Prisma.UserCreateInput[] = [
+const userData: { name: string; email: string; password: string }[] = [
   {
     name: "Alice",
     email: "alice@prisma.io",
-    password: "",
+    password: "password123",
   },
   {
     name: "Nilu",
     email: "nilu@prisma.io",
-    password: "",
+    password: "password123",
   },
   {
     name: "Mahmoud",
     email: "mahmoud@prisma.io",
-    password: "",
+    password: "password123",
   },
 ];
 
@@ -466,10 +468,15 @@ async function main() {
     console.log(`Created goal with id: ${goal.id}`);
   }
 
-  // Seed users
+  // Seed users with hashed passwords
   for (const u of userData) {
+    const hashedPassword = await bcrypt.hash(u.password, 10);
     const user = await prisma.user.create({
-      data: u,
+      data: {
+        name: u.name,
+        email: u.email,
+        password: hashedPassword,
+      },
     });
     console.log(`Created user with id: ${user.id}`);
   }
