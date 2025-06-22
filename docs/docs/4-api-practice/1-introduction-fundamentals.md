@@ -2,64 +2,42 @@
 
 ## Overview
 
-This session covers the essential concepts and best practices in API testing, focusing on authentication, security, and common challenges.
+This session covers the essential concepts and best practices in API testing,
+focusing on authentication, security, and common challenges.
 
 ## Key Topics
 
 ### API Testing Best Practices
 
-- Test planning and strategy
-- Documentation review
-- Environment setup
-- Test data management
-- Error handling
-- Performance considerations
+Here are some best practices in API testing:
 
-### Authentication Methods
+| Best Practice                | Description                                                                                                              |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Define Clear Requirements    | Understand and document the API specifications, including endpoints, request/response formats, and error codes.          |
+| Test for Different Scenarios | Cover various scenarios, including positive, negative, boundary, and edge cases. This is about **input**                 |
+| Validate Responses           | Check the correctness of responses, including status codes, headers, and body content. This is all about **output**       |
+| Monitor Performance          | Test API performance under load to identify bottlenecks and ensure scalability.                                          |
+| Security Testing             | Conduct security assessments to identify vulnerabilities, such as authentication and data protection.                    |
+| Version Control              | Manage API versions to ensure backward compatibility and smooth transitions for users.                                   |
+| Use Mock Services            | Utilize mock servers for testing to simulate API behavior without relying on actual services.                            |
+| Document Test Cases          | Maintain clear documentation of test cases and results for future reference and audits.                                  |
+| Use Automated Testing        | Implement automated tests to ensure consistent and repeatable testing, especially for regression testing. **From day 1** |
+| Continuous Integration       | Integrate API tests into the CI/CD pipeline to catch issues early in the development process. **From day 1**             |
 
-- OAuth 2.0
-  - Authorization flows
-  - Token management
-  - Refresh token handling
-- JWT (JSON Web Tokens)
-  - Token structure
-  - Claims and payload
-  - Signature verification
-- API Keys
-  - Key management
-  - Security best practices
-  - Rate limiting
+Implementing these practices helps ensure robust and reliable APIs.
 
-### Security Considerations
+### Practical Exercises
 
-- HTTPS/TLS implementation
-- Input validation
-- SQL injection prevention
-- XSS protection
-- CSRF protection
-- Rate limiting
-- Data encryption
+1. Define test scenarios from the
+   <a href="http://localhost:3002/api-docs/" target="_blank">API
+   specification</a>
 
-### Common Testing Challenges
+1. Define common error scenarios
 
-- Environment dependencies
-- Data consistency
-- State management
-- Time-sensitive operations
-- Error handling
-- Performance bottlenecks
-- Security vulnerabilities
+1. Use curl on the commandline to **POST** a user
 
-## Practical Exercises
+### Practical Exercises
 
-1. Setting up authentication for API testing
+1. Set up authentication for API testing
 2. Implementing security headers
 3. Creating test scenarios for different auth methods
-4. Handling common error scenarios
-
-## Resources
-
-- OAuth 2.0 Specification
-- JWT Documentation
-- API Security Best Practices Guide
-- Common API Testing Patterns
