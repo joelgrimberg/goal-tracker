@@ -6,12 +6,14 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
-const OAUTH_CLIENT_ID = process.env.OAUTH_CLIENT_ID;
-const OAUTH_CLIENT_SECRET = process.env.OAUTH_CLIENT_SECRET;
 const OAUTH_REDIRECT_URI = process.env.OAUTH_REDIRECT_URI || "http://localhost:3001/oauth";
 
 // Initialize the default client if environment variables are set
 async function initializeDefaultClient() {
+  // Read environment variables here, after dotenv has loaded them
+  const OAUTH_CLIENT_ID = process.env.OAUTH_CLIENT_ID;
+  const OAUTH_CLIENT_SECRET = process.env.OAUTH_CLIENT_SECRET;
+  
   if (OAUTH_CLIENT_ID && OAUTH_CLIENT_SECRET) {
     console.log('Initializing OAuth client with ID:', OAUTH_CLIENT_ID);
     try {

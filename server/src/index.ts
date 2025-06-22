@@ -8,9 +8,10 @@ import oauth from "./plugins/oauth";
 import Inert from "@hapi/inert";
 import path from "path";
 
-// Load environment variables from .env.local first, then .env
-dotenv.config({ path: '.env.local' });
-dotenv.config();
+// Load environment variables from .env first, then .env.local (which takes precedence)
+// Use absolute paths to ensure files are found regardless of working directory
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
 
 const server: Hapi.Server = Hapi.server({
   port: process.env.PORT || 3000,
