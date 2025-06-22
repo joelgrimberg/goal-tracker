@@ -15,6 +15,12 @@
       ]
     }
   },
+  "tags": [
+    { "name": "Auth", "description": "Authentication and user session endpoints" },
+    { "name": "User", "description": "User management endpoints" },
+    { "name": "Goal", "description": "Goal management endpoints" },
+    { "name": "OAuth", "description": "OAuth 2.0 endpoints" }
+  ],
   "servers": [
     {
       "url": "http://localhost:3000",
@@ -188,7 +194,8 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "tags": ["Auth"]
       }
     },
     "/auth/login": {
@@ -233,7 +240,8 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "tags": ["Auth"]
       }
     },
     "/auth/me": {
@@ -270,7 +278,8 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "tags": ["Auth"]
       }
     },
     "/auth/profile": {
@@ -321,7 +330,8 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "tags": ["Auth"]
       }
     },
     "/seed": {
@@ -346,7 +356,8 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "tags": ["Auth"]
       }
     },
     "/oauth/clients": {
@@ -395,7 +406,8 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "tags": ["OAuth"]
       }
     },
     "/oauth/authorize": {
@@ -456,7 +468,8 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "tags": ["OAuth"]
       }
     },
     "/oauth/token": {
@@ -537,7 +550,8 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "tags": ["OAuth"]
       }
     },
     "/signup": {
@@ -585,7 +599,8 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "tags": ["Auth"]
       }
     },
     "/users": {
@@ -616,7 +631,8 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "tags": ["User"]
       }
     },
     "/user/{userId}": {
@@ -659,7 +675,8 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "tags": ["User"]
       },
       "delete": {
         "summary": "Delete user",
@@ -700,7 +717,8 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "tags": ["User"]
       }
     },
     "/user/{userId}/drafts": {
@@ -733,7 +751,8 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "tags": ["User"]
       }
     },
     "/goal": {
@@ -783,7 +802,8 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        }
+        },
+        "tags": ["Goal"]
       }
     },
     "/feed/goals": {
@@ -843,7 +863,8 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "tags": ["Goal"]
       }
     },
     "/goal/{goalId}": {
@@ -896,7 +917,8 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "tags": ["Goal"]
       },
       "delete": {
         "summary": "Delete goal",
@@ -934,7 +956,8 @@
           "500": {
             "description": "Internal server error"
           }
-        }
+        },
+        "tags": ["Goal"]
       }
     },
     "/uploads/avatars/{filename}": {
@@ -968,7 +991,8 @@
           "404": {
             "description": "Avatar not found"
           }
-        }
+        },
+        "tags": ["User"]
       }
     }
   }
