@@ -75,7 +75,7 @@ You've learned the tools. You've seen the techniques. You've practiced the funda
 - [Bruno Documentation](https://www.usebruno.com/docs)
 - [API Testing Best Practices](./1-introduction-fundamentals.md)
 - [Security Testing Guide](./4-api-security.md)
-- [Bruno Flow Scripting](./3-bruno-flow.md)
+- [Bruno API Testing](./3-api-testing-with-bruno.md)
 
 ## Remember
 
