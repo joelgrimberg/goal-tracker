@@ -757,8 +757,9 @@
     },
     "/goal": {
       "post": {
-        "summary": "Create goal",
-        "description": "Creates a new goal. Note: 'status' field is now required.",
+        "tags": ["Goal"],
+        "summary": "Create a new goal",
+        "description": "Creates a new goal with title, description, target date, and status.",
         "operationId": "createGoal",
         "requestBody": {
           "required": true,
@@ -766,14 +767,46 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["title", "description", "status"],
+                "required": ["title", "description"],
                 "properties": {
                   "title": { "type": "string" },
                   "description": { "type": "string" },
+                  "targetDate": { 
+                    "type": "string", 
+                    "format": "date-time",
+                    "description": "Optional target date. If not provided or invalid, defaults to current date. Accepts ISO date formats like '2025-01-15' or '2025-01-15T10:30:00.000Z'"
+                  },
                   "status": { 
-                    "type": "string",
-                    "enum": ["draft", "in_progress", "completed"],
-                    "description": "Required in v2.0.0"
+                    "type": "string", 
+                    "enum": ["Not Started", "Not_started", "Pending", "In Progress", "In_progress", "Finished"],
+                    "default": "Not Started",
+                    "description": "Goal status. Defaults to 'Not Started' if not provided."
+                  }
+                }
+              },
+              "examples": {
+                "minimal": {
+                  "summary": "Minimal request (uses defaults)",
+                  "value": {
+                    "title": "Learn React",
+                    "description": "Master React fundamentals"
+                  }
+                },
+                "withDate": {
+                  "summary": "Request with target date",
+                  "value": {
+                    "title": "Complete Project",
+                    "description": "Finish the project by deadline",
+                    "targetDate": "2025-01-15T00:00:00.000Z",
+                    "status": "Not Started"
+                  }
+                },
+                "withStatus": {
+                  "summary": "Request with different status",
+                  "value": {
+                    "title": "In Progress Task",
+                    "description": "A task that's already started",
+                    "status": "In Progress"
                   }
                 }
               }
@@ -790,20 +823,50 @@
                   "properties": {
                     "id": { "type": "integer" },
                     "title": { "type": "string" },
-                    "description": { "type": "string" }
+                    "description": { "type": "string" },
+                    "targetDate": { "type": "string", "format": "date-time" },
+                    "status": { "type": "string" },
+                    "statusId": { "type": "integer" },
+                    "createdAt": { "type": "string", "format": "date-time" }
                   }
                 }
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "tags": ["Goal"],
+        "summary": "Get all available statuses",
+        "description": "Returns a list of all available goal and task statuses.",
+        "operationId": "getAllStatuses",
+        "responses": {
+          "200": {
+            "description": "List of statuses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer" },
+                      "name": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        },
-        "tags": ["Goal"]
+        }
       }
     },
     "/feed/goals": {
@@ -838,7 +901,8 @@
             "in": "query",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Sort order in format 'field:direction'. Valid fields: title, description, targetDate, createdAt. Valid directions: asc, desc. Example: 'title:asc' or 'createdAt:desc'"
           }
         ],
         "responses": {
@@ -853,7 +917,11 @@
                     "properties": {
                       "id": { "type": "integer" },
                       "title": { "type": "string" },
-                      "description": { "type": "string" }
+                      "description": { "type": "string" },
+                      "targetDate": { "type": "string", "format": "date-time" },
+                      "status": { "type": "string" },
+                      "statusId": { "type": "integer" },
+                      "createdAt": { "type": "string", "format": "date-time" }
                     }
                   }
                 }

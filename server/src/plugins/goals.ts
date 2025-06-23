@@ -42,6 +42,14 @@ const goalsPlugin = {
         handler: deleteGoalHandler,
       },
     ]);
+
+    server.route([
+      {
+        method: "GET",
+        path: "/status",
+        handler: getAllStatusesHandler,
+      },
+    ]);
   },
 };
 
@@ -61,20 +69,49 @@ async function feedHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
       }
     : {};
 
+  // Parse orderBy parameter
+  let orderByClause: any = { targetDate: "asc" }; // default
+  if (orderBy) {
+    const [field, direction] = orderBy.split(':');
+    const validFields = ['title', 'description', 'targetDate', 'createdAt', 'status'];
+    const validDirections = ['asc', 'desc'];
+    
+    if (validFields.includes(field) && validDirections.includes(direction)) {
+      if (field === 'status') {
+        orderByClause = { status: { name: direction } };
+      } else {
+        orderByClause = { [field]: direction };
+      }
+    }
+    // If invalid format, keep default
+  }
+
   try {
     const goals = await prisma.goal.findMany({
       take: Number(take) || undefined,
       skip: Number(skip) || undefined,
-      orderBy: [
-        {
-          targetDate: "asc",
+      orderBy: [orderByClause],
+      include: {
+        status: {
+          select: {
+            id: true,
+            name: true,
+          },
         },
-      ],
+      },
     });
 
-    return h.response(goals).code(200);
+    // Transform goals to include status name instead of statusId
+    const transformedGoals = goals.map(goal => ({
+      ...goal,
+      status: goal.status.name,
+      statusId: goal.status.id, // Keep statusId for backward compatibility
+    }));
+
+    return h.response(transformedGoals).code(200);
   } catch (err) {
     console.log(err);
+    return h.response({ error: "Failed to fetch goals" }).code(500);
   }
 }
 
@@ -163,21 +200,82 @@ async function deleteGoalHandler(
   }
 }
 
-async function createGoalHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
+async function getAllStatusesHandler(
+  request: Hapi.Request,
+  h: Hapi.ResponseToolkit,
+) {
   const { prisma } = request.server.app;
-  const { title, description, targetDate, statusId } = request.payload as any;
 
   try {
+    const statuses = await prisma.status.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
+
+    return h.response(statuses).code(200);
+  } catch (err) {
+    console.log(err);
+    return h.response({ error: "Failed to fetch statuses" }).code(500);
+  }
+}
+
+async function createGoalHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
+  const { prisma } = request.server.app;
+  const { title, description, targetDate, status } = request.payload as any;
+
+  try {
+    // Convert status name to statusId
+    let statusId = 1; // Default to "Not Started"
+    
+    if (status) {
+      const statusMap: { [key: string]: number } = {
+        "Not Started": 1,
+        "Not_started": 1,
+        "Pending": 2,
+        "In Progress": 3,
+        "In_progress": 3,
+        "Finished": 4,
+      };
+      
+      statusId = statusMap[status] || 1;
+    }
+
+    // Handle targetDate with validation
+    let parsedTargetDate = new Date();
+    if (targetDate) {
+      const date = new Date(targetDate);
+      if (!isNaN(date.getTime())) {
+        parsedTargetDate = date;
+      }
+      // If invalid date, keep the default (current date)
+    }
+
     const goal = await prisma.goal.create({
       data: {
         title,
         description,
-        targetDate: new Date(targetDate),
-        statusId: statusId || 1, // Default to statusId 1 if not provided
+        targetDate: parsedTargetDate,
+        statusId,
+      },
+      include: {
+        status: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 
-    return h.response(goal).code(201);
+    // Transform the response to include status name
+    const transformedGoal = {
+      ...goal,
+      status: goal.status.name,
+      statusId: goal.status.id,
+    };
+
+    return h.response(transformedGoal).code(201);
   } catch (err) {
     console.log(err);
     return h.response({ error: "Failed to create goal" }).code(500);

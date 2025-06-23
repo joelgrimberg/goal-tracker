@@ -34,10 +34,10 @@ Implementing these practices helps ensure robust and reliable APIs.
 
 1. Define common error scenarios
 
-1. Use curl on the commandline to **POST** a user
+
 
 ### Practical Exercises
 
 1. Set up authentication for API testing
 2. Implementing security headers
-3. Creating test scenarios for different auth methods
+

@@ -28,7 +28,6 @@ Learn how to integrate Bruno tests with your repository and set up CI/CD pipelin
 
 ### Pipeline Configuration
 
-- Azure Pipeline setup
 - Environment configuration
 - Test execution
 - Reporting
@@ -48,7 +47,6 @@ Learn how to integrate Bruno tests with your repository and set up CI/CD pipelin
 
 ### Execution Strategy
 
-- Test selection
 - Environment selection
 - Parallel execution
 - Sequential execution
@@ -92,9 +90,3 @@ Learn how to integrate Bruno tests with your repository and set up CI/CD pipelin
 4. Setting up reporting
 5. Monitoring test runs
 
-## Resources
-
-- Azure Pipeline Documentation
-- CI/CD Best Practices
-- Test Automation Guide
-- Monitoring Tools

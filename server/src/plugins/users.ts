@@ -40,13 +40,6 @@ const usersPlugin = {
           handler: getDraftsByUserHandler,
         },
       ]);
-    server.route([
-      {
-        method: "DELETE",
-        path: "/user/{userId}",
-        handler: deleteUserHandler,
-      },
-    ]);
   },
 };
 
@@ -119,7 +112,8 @@ async function getAllUsersHandler(
     const users = await prisma.user.findMany();
     return h.response(users).code(200);
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    return h.response({ error: "Failed to fetch users" }).code(500);
   }
 }
 
@@ -129,48 +123,19 @@ async function getDraftsByUserHandler(
 ) {
   const { prisma } = request.server.app;
 
-  const userId = request.params.userId; // Remove Number() conversion since id is a string
-  try {
-    const drafts = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-
-    return h.response(drafts || undefined).code(200);
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-async function deleteUserHandler(
-  request: Hapi.Request,
-  h: Hapi.ResponseToolkit,
-) {
-  const { prisma } = request.server.app;
   const userId = request.params.userId;
-
   try {
-    // Check if user exists
     const user = await prisma.user.findUnique({
-      where: { id: userId }
+      where: { id: userId },
     });
 
     if (!user) {
       return h.response({ error: "User not found" }).code(404);
     }
 
-    // Delete user's OAuth clients
-    await prisma.oAuthClient.deleteMany({
-      where: { userId: userId }
-    });
-
-    // Delete the user
-    await prisma.user.delete({
-      where: { id: userId }
-    });
-
-    return h.response({ message: "User and all associated data deleted successfully" }).code(200);
+    return h.response(user).code(200);
   } catch (err) {
     console.error(err);
-    return h.response({ error: "Failed to delete user" }).code(500);
+    return h.response({ error: "Failed to fetch user" }).code(500);
   }
 }
