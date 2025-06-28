@@ -15,12 +15,6 @@
       ]
     }
   },
-  "tags": [
-    { "name": "Auth", "description": "Authentication and user session endpoints" },
-    { "name": "User", "description": "User management endpoints" },
-    { "name": "Goal", "description": "Goal management endpoints" },
-    { "name": "OAuth", "description": "OAuth 2.0 endpoints" }
-  ],
   "servers": [
     {
       "url": "http://localhost:3000",
@@ -194,8 +188,7 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        },
-        "tags": ["Auth"]
+        }
       }
     },
     "/auth/login": {
@@ -240,8 +233,7 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        },
-        "tags": ["Auth"]
+        }
       }
     },
     "/auth/me": {
@@ -278,280 +270,7 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        },
-        "tags": ["Auth"]
-      }
-    },
-    "/auth/profile": {
-      "put": {
-        "summary": "Update user profile",
-        "description": "Updates the current user's profile information.",
-        "operationId": "updateUserProfile",
-        "security": [
-          { "bearerAuth": [] }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "email": { "type": "string", "format": "email" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Profile updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": { "type": "string" },
-                    "name": { "type": "string" },
-                    "email": { "type": "string" },
-                    "avatarUrl": { "type": "string", "nullable": true }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "tags": ["Auth"]
-      }
-    },
-    "/seed": {
-      "post": {
-        "summary": "Seed database",
-        "description": "Runs the database seed script to populate the database with sample data.",
-        "operationId": "seedDatabase",
-        "responses": {
-          "200": {
-            "description": "Database seeded successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": { "type": "string" }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "tags": ["Auth"]
-      }
-    },
-    "/oauth/clients": {
-      "post": {
-        "summary": "Create OAuth client",
-        "description": "Creates a new OAuth client with client ID and secret.",
-        "operationId": "createOAuthClient",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["redirectUris", "grants"],
-                "properties": {
-                  "redirectUris": {
-                    "type": "array",
-                    "items": { "type": "string" },
-                    "description": "Array of allowed redirect URIs"
-                  },
-                  "grants": {
-                    "type": "array",
-                    "items": { "type": "string" },
-                    "description": "Array of OAuth grant types"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "OAuth client created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "clientId": { "type": "string" },
-                    "clientSecret": { "type": "string" }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "tags": ["OAuth"]
-      }
-    },
-    "/oauth/authorize": {
-      "get": {
-        "summary": "OAuth authorization endpoint",
-        "description": "Handles OAuth authorization code flow.",
-        "operationId": "oauthAuthorize",
-        "parameters": [
-          {
-            "name": "client_id",
-            "in": "query",
-            "required": true,
-            "schema": { "type": "string" },
-            "description": "OAuth client ID"
-          },
-          {
-            "name": "redirect_uri",
-            "in": "query",
-            "required": true,
-            "schema": { "type": "string" },
-            "description": "Redirect URI after authorization"
-          },
-          {
-            "name": "response_type",
-            "in": "query",
-            "required": true,
-            "schema": { "type": "string" },
-            "description": "Response type (should be 'code')"
-          },
-          {
-            "name": "scope",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "string" },
-            "description": "Requested scopes"
-          },
-          {
-            "name": "state",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "string" },
-            "description": "State parameter for CSRF protection"
-          }
-        ],
-        "responses": {
-          "302": {
-            "description": "Redirect to client with authorization code",
-            "headers": {
-              "Location": {
-                "schema": { "type": "string" },
-                "description": "Redirect URL with authorization code"
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "tags": ["OAuth"]
-      }
-    },
-    "/oauth/token": {
-      "post": {
-        "summary": "OAuth token endpoint",
-        "description": "Exchanges authorization code for access token or refreshes tokens.",
-        "operationId": "oauthToken",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["grant_type", "client_id", "client_secret"],
-                "properties": {
-                  "grant_type": {
-                    "type": "string",
-                    "enum": ["authorization_code", "refresh_token"],
-                    "description": "OAuth grant type"
-                  },
-                  "code": {
-                    "type": "string",
-                    "description": "Authorization code (required for authorization_code grant)"
-                  },
-                  "client_id": {
-                    "type": "string",
-                    "description": "OAuth client ID"
-                  },
-                  "client_secret": {
-                    "type": "string",
-                    "description": "OAuth client secret"
-                  },
-                  "redirect_uri": {
-                    "type": "string",
-                    "description": "Redirect URI (required for authorization_code grant)"
-                  },
-                  "refresh_token": {
-                    "type": "string",
-                    "description": "Refresh token (required for refresh_token grant)"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Token response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "access_token": { "type": "string" },
-                    "refresh_token": { "type": "string" },
-                    "token_type": { "type": "string" },
-                    "expires_in": { "type": "integer" },
-                    "user": {
-                      "type": "object",
-                      "properties": {
-                        "id": { "type": "string" },
-                        "name": { "type": "string" },
-                        "email": { "type": "string" },
-                        "avatar": { "type": "string" }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        },
-        "tags": ["OAuth"]
+        }
       }
     },
     "/signup": {
@@ -599,8 +318,7 @@
           "500": {
             "description": "Internal server error"
           }
-        },
-        "tags": ["Auth"]
+        }
       }
     },
     "/users": {
@@ -631,53 +349,314 @@
           "500": {
             "description": "Internal server error"
           }
-        },
-        "tags": ["User"]
+        }
       }
     },
-    "/user/{userId}": {
+    "/user/{userId}/drafts": {
       "get": {
-        "summary": "Get user by ID",
-        "description": "Returns details of a specific user by their ID.",
-        "operationId": "getUserById",
+        "deprecated": true,
+        "summary": "Get user drafts - DEPRECATED",
+        "description": "This endpoint is deprecated and will be removed in v3.0.0. Use /goals?status=draft instead.",
+        "operationId": "getUserDrafts",
         "parameters": [
           {
             "name": "userId",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "UUID of the user"
+              "type": "integer"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "User details",
+            "description": "User drafts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/goal": {
+      "post": {
+        "summary": "Create goal",
+        "description": "Creates a new goal. Note: 'status' field is now required.",
+        "operationId": "createGoal",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "content", "status"],
+                "properties": {
+                  "title": { "type": "string" },
+                  "content": { "type": "string" },
+                  "status": { 
+                    "type": "string",
+                    "enum": ["draft", "in_progress", "completed"],
+                    "description": "Required in v2.0.0"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Goal created successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
-                    "name": { "type": "string" },
-                    "email": { "type": "string" },
-                    "avatarUrl": { "type": "string", "nullable": true }
+                    "id": { "type": "integer" },
+                    "title": { "type": "string" },
+                    "content": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/feed/goals": {
+      "get": {
+        "summary": "Get all goals (feed)",
+        "description": "Returns a list of goals with optional filtering.",
+        "operationId": "getGoalsFeed",
+        "parameters": [
+          {
+            "name": "searchString",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "orderBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of goals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer" },
+                      "title": { "type": "string" },
+                      "content": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/goal/{goalId}": {
+      "get": {
+        "summary": "Get goal by ID",
+        "description": "Returns details of a specific goal.",
+        "operationId": "getGoalById",
+        "parameters": [
+          {
+            "name": "goalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Goal details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "title": { "type": "string" },
+                    "content": { "type": "string" },
+                    "tasks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "integer" },
+                          "title": { "type": "string" },
+                          "description": { "type": "string" },
+                          "status": { "type": "string" }
+                        }
+                      }
+                    },
+                    "status": { "type": "string" }
                   }
                 }
               }
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "Goal not found"
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Internal server error"
           }
-        },
-        "tags": ["User"]
+        }
       },
+      "delete": {
+        "summary": "Delete goal",
+        "description": "Deletes a goal and its related tasks.",
+        "operationId": "deleteGoal",
+        "parameters": [
+          {
+            "name": "goalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Goal deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "title": { "type": "string" },
+                    "content": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Goal not found or cannot be deleted"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/publish/goals/{goalId}": {
+      "put": {
+        "summary": "Publish/Unpublish goal",
+        "description": "Toggles the published state of a goal.",
+        "operationId": "togglePublishGoal",
+        "parameters": [
+          {
+            "name": "goalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Goal updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "title": { "type": "string" },
+                    "content": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Goal not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/uploads/avatars/{filename}": {
+      "get": {
+        "summary": "Get avatar",
+        "description": "Serves uploaded avatar images.",
+        "operationId": "getAvatar",
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Avatar image",
+            "content": {
+              "image/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Avatar not found"
+          }
+        }
+      }
+    },
+    "/user/{userId}": {
       "delete": {
         "summary": "Delete user",
         "description": "Deletes a user and all associated data (goals, tasks, etc.). No authentication required.",
@@ -717,350 +696,7 @@
           "500": {
             "$ref": "#/components/responses/InternalServerError"
           }
-        },
-        "tags": ["User"]
-      }
-    },
-    "/user/{userId}/drafts": {
-      "get": {
-        "deprecated": true,
-        "summary": "Get user drafts - DEPRECATED",
-        "description": "This endpoint is deprecated and will be removed in v3.0.0. Use /goals?status=draft instead.",
-        "operationId": "getUserDrafts",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User drafts",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "tags": ["User"]
-      }
-    },
-    "/goal": {
-      "post": {
-        "tags": ["Goal"],
-        "summary": "Create a new goal",
-        "description": "Creates a new goal with title, description, target date, and status.",
-        "operationId": "createGoal",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["title", "description"],
-                "properties": {
-                  "title": { "type": "string" },
-                  "description": { "type": "string" },
-                  "targetDate": { 
-                    "type": "string", 
-                    "format": "date-time",
-                    "description": "Optional target date. If not provided or invalid, defaults to current date. Accepts ISO date formats like '2025-01-15' or '2025-01-15T10:30:00.000Z'"
-                  },
-                  "status": { 
-                    "type": "string", 
-                    "enum": ["Not Started", "Not_started", "Pending", "In Progress", "In_progress", "Finished"],
-                    "default": "Not Started",
-                    "description": "Goal status. Defaults to 'Not Started' if not provided."
-                  }
-                }
-              },
-              "examples": {
-                "minimal": {
-                  "summary": "Minimal request (uses defaults)",
-                  "value": {
-                    "title": "Learn React",
-                    "description": "Master React fundamentals"
-                  }
-                },
-                "withDate": {
-                  "summary": "Request with target date",
-                  "value": {
-                    "title": "Complete Project",
-                    "description": "Finish the project by deadline",
-                    "targetDate": "2025-01-15T00:00:00.000Z",
-                    "status": "Not Started"
-                  }
-                },
-                "withStatus": {
-                  "summary": "Request with different status",
-                  "value": {
-                    "title": "In Progress Task",
-                    "description": "A task that's already started",
-                    "status": "In Progress"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Goal created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": { "type": "integer" },
-                    "title": { "type": "string" },
-                    "description": { "type": "string" },
-                    "targetDate": { "type": "string", "format": "date-time" },
-                    "status": { "type": "string" },
-                    "statusId": { "type": "integer" },
-                    "createdAt": { "type": "string", "format": "date-time" }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
         }
-      }
-    },
-    "/status": {
-      "get": {
-        "tags": ["Goal"],
-        "summary": "Get all available statuses",
-        "description": "Returns a list of all available goal and task statuses.",
-        "operationId": "getAllStatuses",
-        "responses": {
-          "200": {
-            "description": "List of statuses",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": { "type": "integer" },
-                      "name": { "type": "string" }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerError"
-          }
-        }
-      }
-    },
-    "/feed/goals": {
-      "get": {
-        "summary": "Get all goals (feed)",
-        "description": "Returns a list of goals with optional filtering.",
-        "operationId": "getGoalsFeed",
-        "parameters": [
-          {
-            "name": "searchString",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "skip",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "take",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "orderBy",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Sort order in format 'field:direction'. Valid fields: title, description, targetDate, createdAt. Valid directions: asc, desc. Example: 'title:asc' or 'createdAt:desc'"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of goals",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": { "type": "integer" },
-                      "title": { "type": "string" },
-                      "description": { "type": "string" },
-                      "targetDate": { "type": "string", "format": "date-time" },
-                      "status": { "type": "string" },
-                      "statusId": { "type": "integer" },
-                      "createdAt": { "type": "string", "format": "date-time" }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "tags": ["Goal"]
-      }
-    },
-    "/goal/{goalId}": {
-      "get": {
-        "summary": "Get goal by ID",
-        "description": "Returns details of a specific goal.",
-        "operationId": "getGoalById",
-        "parameters": [
-          {
-            "name": "goalId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Goal details",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": { "type": "integer" },
-                    "title": { "type": "string" },
-                    "description": { "type": "string" },
-                    "tasks": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": { "type": "integer" },
-                          "title": { "type": "string" },
-                          "description": { "type": "string" },
-                          "status": { "type": "string" }
-                        }
-                      }
-                    },
-                    "status": { "type": "string" }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Goal not found"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "tags": ["Goal"]
-      },
-      "delete": {
-        "summary": "Delete goal",
-        "description": "Deletes a goal and its related tasks.",
-        "operationId": "deleteGoal",
-        "parameters": [
-          {
-            "name": "goalId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Goal deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": { "type": "integer" },
-                    "title": { "type": "string" },
-                    "description": { "type": "string" }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Goal not found or cannot be deleted"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        },
-        "tags": ["Goal"]
-      }
-    },
-    "/uploads/avatars/{filename}": {
-      "get": {
-        "summary": "Get avatar image",
-        "description": "Serves uploaded avatar images.",
-        "operationId": "getAvatar",
-        "parameters": [
-          {
-            "name": "filename",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Avatar filename"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Avatar image",
-            "content": {
-              "image/*": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Avatar not found"
-          }
-        },
-        "tags": ["User"]
       }
     }
   }

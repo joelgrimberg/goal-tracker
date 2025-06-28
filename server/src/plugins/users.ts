@@ -40,6 +40,13 @@ const usersPlugin = {
           handler: getDraftsByUserHandler,
         },
       ]);
+    server.route([
+      {
+        method: "DELETE",
+        path: "/user/{userId}",
+        handler: deleteUserHandler,
+      },
+    ]);
   },
 };
 
@@ -137,5 +144,24 @@ async function getDraftsByUserHandler(
   } catch (err) {
     console.error(err);
     return h.response({ error: "Failed to fetch user" }).code(500);
+  }
+}
+
+async function deleteUserHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
+  const { prisma } = request.server.app;
+  const userId = request.params.userId;
+  try {
+    // Try to delete the user
+    const deletedUser = await prisma.user.delete({
+      where: { id: userId },
+    });
+    return h.response(deletedUser).code(200);
+  } catch (err: any) {
+    if (err.code === 'P2025') {
+      // Record not found
+      return h.response({ error: "User not found" }).code(404);
+    }
+    console.error(err);
+    return h.response({ error: "Failed to delete user" }).code(500);
   }
 }

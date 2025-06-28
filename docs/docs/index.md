@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Goal-Tracker Training Platform
 
-![Goal Tracker Logo](../img/goaltracker-small.png)
+![Goal Tracker Logo](/img/goaltracker-small.png)
 
 ## Welcome to the Goal-Tracker Training Platform
 

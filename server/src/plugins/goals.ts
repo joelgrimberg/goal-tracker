@@ -60,11 +60,11 @@ async function feedHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
 
   const { searchString, skip, take, orderBy } = request.query;
 
-  const or = searchString
+  const where = searchString
     ? {
         OR: [
           { title: { contains: searchString } },
-          { content: { contains: searchString } },
+          { description: { contains: searchString } },
         ],
       }
     : {};
@@ -88,6 +88,7 @@ async function feedHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
 
   try {
     const goals = await prisma.goal.findMany({
+      where,
       take: Number(take) || undefined,
       skip: Number(skip) || undefined,
       orderBy: [orderByClause],
