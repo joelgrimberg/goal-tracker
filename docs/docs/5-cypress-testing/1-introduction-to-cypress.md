@@ -41,16 +41,6 @@ Cypress is a modern, JavaScript-based end-to-end testing framework designed spec
 | **API Testing** | Built-in API testing | Separate API testing tools |
 | **Learning Curve** | Easier to learn | Steeper learning curve |
 
-### Cypress vs TestCafe
-
-| Aspect | Cypress | TestCafe |
-|--------|---------|----------|
-| **Architecture** | Runs in browser | Runs outside browser |
-| **Setup** | Requires Node.js setup | No setup required |
-| **Browser Support** | Limited to Chrome-based browsers | All major browsers |
-| **Performance** | Good performance | Excellent performance |
-| **Debugging** | Excellent debugging | Good debugging |
-
 ## Why Choose Cypress?
 
 ### Advantages
@@ -97,45 +87,4 @@ Cypress is a modern, JavaScript-based end-to-end testing framework designed spec
 1. **Test Runner**: Node.js application that orchestrates tests
 2. **Browser**: Chrome-based browser where tests execute
 3. **Proxy**: Intercepts and modifies network requests
-4. **Command Queue**: Manages test commands and assertions
-
-## Exercise: Framework Comparison
-
-### Assignment 1: Research and Compare
-
-**Objective**: Understand the differences between testing frameworks
-
-**Tasks**:
-1. Research one testing framework (Selenium, Playwright, or TestCafe)
-2. Create a comparison table with Cypress
-3. Identify 3 pros and cons for each framework
-4. Present your findings to the group
-
-**Deliverables**:
-- Comparison table
-- Pros/cons list
-- 5-minute presentation
-
-### Assignment 2: Setup Decision Matrix
-
-**Objective**: Create a decision framework for choosing testing tools
-
-**Tasks**:
-1. Define criteria for choosing a testing framework
-2. Rate Cypress, Selenium, and Playwright on each criterion
-3. Create a weighted scoring system
-4. Apply the matrix to a sample project
-
-**Criteria to consider**:
-- Learning curve
-- Setup complexity
-- Browser support
-- Performance
-- Debugging capabilities
-- Community support
-- Documentation quality
-
-**Deliverables**:
-- Decision matrix spreadsheet
-- Weighted scoring system
-- Recommendation for sample project 
+4. **Command Queue**: Manages test commands and assertions 
