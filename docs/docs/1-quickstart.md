@@ -10,7 +10,7 @@ This guide will help you get started with the Goal Tracker application quickly.
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/goal-tracker.git
+git clone https://github.com/joelgrimberg/goal-tracker.git
 cd goal-tracker
 ```
 
