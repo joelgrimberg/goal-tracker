@@ -114,6 +114,7 @@ export default function GoalDetails() {
                       onChange={(e) =>
                         setData({ ...data, title: e.target.value })
                       }
+                      data-testid="edit-title"
                     />
                   </td>
                 </tr>
@@ -127,6 +128,7 @@ export default function GoalDetails() {
                       onChange={(e) =>
                         setData({ ...data, description: e.target.value })
                       }
+                      data-testid="edit-description"
                     />
                   </td>
                 </tr>
@@ -154,6 +156,7 @@ export default function GoalDetails() {
                       onChange={(e) =>
                         setData({ ...data, targetDate: e.target.value })
                       }
+                      data-testid="edit-target-date"
                     />
                   </td>
                 </tr>
@@ -168,79 +171,21 @@ export default function GoalDetails() {
                       onChange={(e) =>
                         setData({ ...data, status: e.target.value })
                       }
+                      data-testid="edit-status"
                     />
                   </td>
                 </tr>
-                {data.tasks.map((task, index) => (
-                  <React.Fragment key={task.id}>
-                    {index > -1 && (
-                      <tr>
-                        <td colSpan="3">
-                          <hr className="task-divider" />
-                        </td>
-                      </tr>
-                    )}
-                    <tr>
-                      <td colSpan="2">
-                        <h3>Task {index + 1}</h3>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>Task Title</label>
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={task.title}
-                          onChange={(e) => {
-                            const newTasks = [...data.tasks];
-                            newTasks[index].title = e.target.value;
-                            setData({ ...data, tasks: newTasks });
-                          }}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>Task Description</label>
-                      </td>
-                      <td>
-                        <textarea
-                          value={task.description}
-                          onChange={(e) => {
-                            const newTasks = [...data.tasks];
-                            newTasks[index].description = e.target.value;
-                            setData({ ...data, tasks: newTasks });
-                          }}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <label>Task Status</label>
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          value={task.status}
-                          onChange={(e) => {
-                            const newTasks = [...data.tasks];
-                            newTasks[index].status = e.target.value;
-                            setData({ ...data, tasks: newTasks });
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  </React.Fragment>
-                ))}
                 <tr>
                   <td colSpan="2"></td>
                   <td style={{ textAlign: "right" }}>
-                    <button type="submit">Submit</button>
-                    &nbsp;|
-                    <button type="button" onClick={handleCancel}>
-                      &nbsp;Cancel
+                    <button type="submit" data-testid="save-goal">Submit</button>
+                    &nbsp;|&nbsp;
+                    <button type="button" onClick={() => router.push(`/goal/delete?id=${id}`)} data-testid="trash-goal">
+                      Trash
+                    </button>
+                    &nbsp;|&nbsp;
+                    <button type="button" onClick={handleCancel} data-testid="cancel-edit">
+                      Cancel
                     </button>
                   </td>
                 </tr>

@@ -427,7 +427,13 @@ const goalData: Prisma.GoalCreateInput[] = [
   },
 ];
 
-const userData: { name: string; email: string; password: string }[] = [
+const userData: { name: string; email: string; password: string; avatarUrl?: string }[] = [
+  {
+    name: "Joel",
+    email: "joel@joelgrimberg.nl",
+    password: "mypassword",
+    avatarUrl: "/me.jpg",
+  },
   {
     name: "Alice",
     email: "alice@prisma.io",
@@ -476,6 +482,7 @@ async function main() {
         name: u.name,
         email: u.email,
         password: hashedPassword,
+        avatarUrl: u.avatarUrl || null,
       },
     });
     console.log(`Created user with id: ${user.id}`);

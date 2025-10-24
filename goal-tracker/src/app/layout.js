@@ -28,6 +28,12 @@ export default function RootLayout({ children }) {
     setMenuVisible(!menuVisible);
   };
 
+  // Set global constant
+  useEffect(() => {
+    window.training = 'cypress';
+    console.log(window.training)
+  }, []);
+
   useEffect(() => {
     const toggleVideo = () => {
       if (videoRef.current) {

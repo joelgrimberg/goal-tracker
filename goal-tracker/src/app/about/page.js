@@ -94,48 +94,58 @@ export default function DeveloperInfoPage() {
             role="grid"
             aria-label="Developer Information"
           >
-            <thead>
-              <tr>
-                <th scope="col">Value</th>
-              </tr>
-            </thead>
             <tbody>
-              {developerInfo.map((info, index) => (
-                <tr
-                  key={index}
-                  role="row"
-                  className={selectedRow === index ? "highlight" : ""}
-                  onMouseEnter={() => setSelectedRow(index)}
-                  aria-selected={selectedRow === index}
-                  tabIndex={0}
-                  onFocus={() => setSelectedRow(index)}
-                >
-                  <td role="gridcell">
-                    {info.type === "link" ||
-                    info.type === "email" ||
-                    info.icon ? (
-                      <a
-                        href={
-                          info.type === "email"
-                            ? `mailto:${info.value}`
-                            : info.type === "link"
-                              ? info.value
-                              : undefined
-                        }
-                        target={info.type === "link" ? "_blank" : undefined}
-                        rel="noopener noreferrer"
-                        className="goal-link flex items-center space-x-2"
-                        aria-label={info.label}
-                      >
-                        {info.icon}
-                        <span>{info.value}</span>
-                      </a>
-                    ) : (
-                      info.value
-                    )}
-                  </td>
-                </tr>
-              ))}
+              <tr>
+                <td style={{ padding: 0, verticalAlign: 'top' }}>
+                  <table style={{ width: '100%', border: 'none' }}>
+                    <tbody style={{ border: 'none' }}>
+                      {developerInfo.map((info, index) => (
+                        <tr
+                          key={index}
+                          role="row"
+                          className={selectedRow === index ? "highlight" : ""}
+                          onMouseEnter={() => setSelectedRow(index)}
+                          aria-selected={selectedRow === index}
+                          tabIndex={0}
+                          onFocus={() => setSelectedRow(index)}
+                        >
+                          <td role="gridcell">
+                            {info.type === "link" ||
+                            info.type === "email" ||
+                            info.icon ? (
+                              <a
+                                href={
+                                  info.type === "email"
+                                    ? `mailto:${info.value}`
+                                    : info.type === "link"
+                                      ? info.value
+                                      : undefined
+                                }
+                                target={info.type === "link" ? "_blank" : undefined}
+                                rel="noopener noreferrer"
+                                className="goal-link flex items-center space-x-2"
+                                aria-label={info.label}
+                              >
+                                {info.icon}
+                                <span>{info.value}</span>
+                              </a>
+                            ) : (
+                              info.value
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </td>
+                <td style={{ padding: 0, margin: 0, verticalAlign: 'top', textAlign: 'right', width: '192px' }}>
+                  <img
+                    src="/me.jpg"
+                    alt="Joel Grimberg"
+                    style={{ width: '100%', height: 'auto', display: 'block', margin: 0, padding: 0 }}
+                  />
+                </td>
+              </tr>
             </tbody>
             <tfoot>
               <tr>

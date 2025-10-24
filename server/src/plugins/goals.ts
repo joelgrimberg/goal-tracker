@@ -37,6 +37,14 @@ const goalsPlugin = {
 
     server.route([
       {
+        method: "PUT",
+        path: "/goal/{goalId}",
+        handler: updateGoalHandler,
+      },
+    ]);
+
+    server.route([
+      {
         method: "DELETE",
         path: "/goal/{goalId}",
         handler: deleteGoalHandler,
@@ -171,6 +179,65 @@ async function getGoalHandler(request: Hapi.Request, h: Hapi.ResponseToolkit) {
         error: `Goal with ID ${goalId} does not exist in the database`,
       })
       .code(404);
+  }
+}
+
+async function updateGoalHandler(
+  request: Hapi.Request,
+  h: Hapi.ResponseToolkit,
+) {
+  const { prisma } = request.server.app;
+  const goalId = Number(request.params.goalId);
+  const { title, description, status, targetDate } = request.payload as any;
+
+  try {
+    // Convert status name to statusId if needed
+    let statusId = undefined;
+    if (status) {
+      const statusMap: { [key: string]: number } = {
+        "Not Started": 1,
+        "Not_started": 1,
+        "Pending": 2,
+        "In Progress": 3,
+        "In_progress": 3,
+        "Finished": 4,
+      };
+      statusId = statusMap[status];
+    }
+
+    // Prepare update data
+    const updateData: any = {};
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) updateData.description = description;
+    if (statusId !== undefined) updateData.statusId = statusId;
+    if (targetDate !== undefined) updateData.targetDate = new Date(targetDate);
+
+    const goal = await prisma.goal.update({
+      where: { id: goalId },
+      data: updateData,
+      include: {
+        status: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    // Transform the response to include status name
+    const transformedGoal = {
+      ...goal,
+      status: goal.status.name,
+      statusId: goal.status.id,
+    };
+
+    return h.response(transformedGoal).code(200);
+  } catch (err) {
+    console.log(err);
+    return h.response({
+      error: `Failed to update goal with ID ${goalId}`,
+    }).code(500);
   }
 }
 

@@ -77,14 +77,14 @@ export default function Header() {
       role="banner"
     >
       <div className="text-lg font-bold">
-        <Link href="/" aria-label="Go to Goal Tracker home page">
+        <Link href="/" aria-label="Go to Goal Tracker home page" data-testid="header-logo">
           Goal Tracker
         </Link>
       </div>
       <div className="flex items-center space-x-4">
-        {isClient && user?.avatar && (
+        {isClient && user?.avatar && user.avatar !== 'null' && (
           <img
-            src={`http://localhost:3000${user.avatar}`}
+            src={user.avatar.startsWith('/uploads/') ? `http://localhost:3000${user.avatar}` : user.avatar}
             alt="User Avatar"
             className="w-10 h-10 rounded-full"
           />
@@ -101,6 +101,7 @@ export default function Header() {
           onClick={toggleMenu}
           className="p-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
           aria-label={menuVisible ? "Close menu" : "Open menu"}
+          data-testid="menu-button"
           aria-expanded={menuVisible}
         >
           {menuVisible ? (
@@ -128,10 +129,22 @@ export default function Header() {
                   query: { name: "home" },
                 }}
                 aria-label="Go to home page"
+                data-testid="menu-home"
               >
                 [h]ome
               </Link>
             </li>
+            {!isLoggedIn && (
+              <li
+                className="px-4 py-2 hover:bg-gray-600 flex items-center space-x-2"
+                role="menuitem"
+              >
+                <UserCircleIcon className="h-5 w-5" />
+                <Link href="/login" aria-label="Go to login page" data-testid="menu-login">
+                  [l]ogin
+                </Link>
+              </li>
+            )}
             {isLoggedIn && (
               <li
                 className="px-4 py-2 hover:bg-gray-600 flex items-center space-x-2"
@@ -141,6 +154,7 @@ export default function Header() {
                 <Link
                   href="/profile"
                   aria-label="Go to profile settings"
+                  data-testid="menu-profile"
                 >
                   [p]rofile
                 </Link>
@@ -151,9 +165,17 @@ export default function Header() {
               role="menuitem"
             >
               <InformationCircleIcon className="h-5 w-5" />
-              <a href="/about" aria-label="Go to about page">
+              <a href="/about" aria-label="Go to about page" data-testid="menu-about">
                 [a]bout
               </a>
+            </li>
+            <li
+              className="px-4 py-2 hover:bg-gray-600 flex items-center space-x-2"
+              role="menuitem"
+            >
+              <Link href="/form/create" aria-label="Create a new goal" data-testid="menu-create-goal">
+                [c]reate goal
+              </Link>
             </li>
             {isLoggedIn && (
               <li
@@ -163,6 +185,7 @@ export default function Header() {
                 <button
                   onClick={handleLogout}
                   className="w-full text-left"
+                  data-testid="menu-logout"
                 >
                   [l]ogout
                 </button>

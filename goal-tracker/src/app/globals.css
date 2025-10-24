@@ -300,9 +300,9 @@ table td.info-box {
   transition: color 0.3s ease; /* Smooth transition */
 }
 
-/* Remove hover effect on table rows */
+/* Hover effect on table rows */
 .table-width tr:hover td {
-  color: inherit; /* Inherit the default color */
+  color: #ffffff; /* White text on hover */
 }
 
 /* Highlighted row font color */
@@ -320,10 +320,11 @@ table td.info-box {
   transition: color 0.3s ease; /* Smooth transition */
 }
 
-/* Remove hover effect on table rows */
+/* Hover effect on table rows */
 .table-width tr:hover td {
-  color: inherit; /* Inherit the default color */
-  background-color: inherit; /* Inherit the default background color */
+  color: #ffffff; /* White text on hover */
+  background-color: #5d27f9; /* Purple background on hover */
+  cursor: pointer;
 }
 
 /* Highlighted row font color */

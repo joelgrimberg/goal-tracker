@@ -99,9 +99,14 @@ export default function LoginPage() {
       const data = await response.json();
       const token = data.token;
 
+      console.log("Login response data:", data);
+
       localStorage.setItem("authToken", token);
       localStorage.setItem("userName", data.name);
-      localStorage.setItem("userAvatar", data.avatar);
+      localStorage.setItem("userEmail", formData.email);
+      if (data.avatar) {
+        localStorage.setItem("userAvatar", data.avatar);
+      }
       localStorage.setItem("authMethod", "jwt"); // Store the auth method
 
       login();

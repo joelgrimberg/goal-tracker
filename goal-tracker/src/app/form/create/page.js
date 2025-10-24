@@ -64,6 +64,11 @@ export default function Signup() {
                     <p aria-live="polite">{state?.message}</p>
                   </td>
                 </tr>
+                <tr>
+                  <td colSpan="2">
+                    <button disabled={pending} data-testid="submit-goal" className="border border-gray-300 px-4 py-2 rounded hover:text-white">Add</button>
+                  </td>
+                </tr>
               </tbody>
               <tfoot>
                 <tr>
@@ -73,7 +78,6 @@ export default function Signup() {
                 </tr>
               </tfoot>
             </table>
-            <button disabled={pending}>Add</button>
           </form>
         </section>
       </main>
