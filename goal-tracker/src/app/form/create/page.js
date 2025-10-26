@@ -29,7 +29,7 @@ export default function Signup() {
                     <label htmlFor="goal">goal</label>
                   </td>
                   <td>
-                    <input type="text" id="goal" name="goal" required />
+                    <input type="text" id="goal" name="goal" data-testid="create-title" required />
                   </td>
                 </tr>
                 <tr>
@@ -41,6 +41,7 @@ export default function Signup() {
                       type="description"
                       id="description"
                       name="description"
+                      data-testid="create-description"
                       required
                     />
                   </td>
@@ -50,7 +51,7 @@ export default function Signup() {
                     <label htmlFor="status">status</label>
                   </td>
                   <td>
-                    <select id="status" name="status" required>
+                    <select id="status" name="status" data-testid="create-status" required>
                       <option value="Not_started">Not started</option>
                       <option value="In_progress">In progress</option>
                       <option value="Pending">Pending</option>

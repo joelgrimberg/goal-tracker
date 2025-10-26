@@ -6,6 +6,7 @@ import {
   HomeIcon,
   InformationCircleIcon,
   UserCircleIcon,
+  PrinterIcon,
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -25,6 +26,16 @@ export default function Header() {
 
   useEffect(() => {
     setIsClient(true);
+
+    // Make window.print stubbable for tests by creating it as an own property
+    // Store the native print function
+    const nativePrint = window.print.bind(window);
+    // Create print as an own property that can be stubbed
+    Object.defineProperty(window, 'print', {
+      value: nativePrint,
+      writable: true,
+      configurable: true
+    });
 
     // Fetch user data from localStorage
     const name = localStorage.getItem("userName");
@@ -71,6 +82,10 @@ export default function Header() {
     router.push('/login');
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <header
       className="flex items-center justify-between px-4 py-2 bg-gray-800 text-white"
@@ -97,6 +112,15 @@ export default function Header() {
             {user.name}
           </span>
         )}
+        <button
+          onClick={handlePrint}
+          className="p-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          aria-label="Print page"
+          data-testid="print-button"
+          title="Print page (Ctrl/Cmd + P)"
+        >
+          <PrinterIcon className="h-6 w-6" />
+        </button>
         <button
           onClick={toggleMenu}
           className="p-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"

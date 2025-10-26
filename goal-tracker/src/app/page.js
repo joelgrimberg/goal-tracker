@@ -12,21 +12,82 @@ export default function Home() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [notification, setNotification] = useState(null);
+  const [notificationSource, setNotificationSource] = useState(null); // 'form' or 'api'
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const searchParams = useSearchParams();
   
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
 
-  const { data, error, isLoading } = useSWR(
-    "http://localhost:3000/feed/goals",
-    fetcher,
-  );
-  const [selectedRow, setSelectedRow] = useState(-1);
-  const [hoverText, setHoverText] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchInput(query);
+    setCurrentPage(0); // Reset to first page when searching
+  };
 
-  const { isLoggedIn, logout } = useAuth(); // Access login state and logout function from AuthContext
+  const clearSearch = () => {
+    setSearchInput("");
+    setSearchQuery("");
+    setCurrentPage(0);
+    setIsSearching(false);
+  };
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(searchInput);
+      setIsSearching(searchInput.length > 0);
+    }, 800); // Wait 800ms after user stops typing
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  // Build API URL with search parameter
+  const apiUrl = searchQuery 
+    ? `http://localhost:3000/feed/goals?searchString=${encodeURIComponent(searchQuery)}`
+    : "http://localhost:3000/feed/goals";
+    
+  const { data, error, isLoading } = useSWR(apiUrl, fetcher, {
+    refreshInterval: 3000, // Poll every 3 seconds for real-time updates
+    revalidateOnFocus: true, // Revalidate when window regains focus
+    revalidateOnReconnect: true, // Revalidate when network reconnects
+  });
+
+  const [previousData, setPreviousData] = useState(null);
+
+  // Detect new goals added via API and show notification
+  useEffect(() => {
+    if (data && previousData && Array.isArray(data) && Array.isArray(previousData)) {
+      const newGoals = data.filter(goal => 
+        !previousData.some(prevGoal => prevGoal.id === goal.id)
+      );
+      
+      if (newGoals.length > 0) {
+        const latestGoal = newGoals[newGoals.length - 1]; // Get the most recent one
+        setNotification({
+          title: latestGoal.title,
+          description: latestGoal.description
+        });
+        setNotificationSource('api');
+        
+        // Auto-hide notification after 5 seconds
+        const timer = setTimeout(() => {
+          setNotification(null);
+          setNotificationSource(null);
+        }, 5000);
+        
+        return () => clearTimeout(timer);
+      }
+    }
+    
+    // Update previous data
+    if (data) {
+      setPreviousData(data);
+    }
+  }, [data, previousData]);
 
   // Set global constant - runs on mount
   useEffect(() => {
@@ -40,15 +101,20 @@ export default function Home() {
     const title = searchParams.get('title');
     const description = searchParams.get('description');
     
+    console.log('URL params:', { success, title, description });
+    
     if (success === 'true' && title) {
+      console.log('Setting notification from URL params');
       setNotification({
         title: decodeURIComponent(title),
         description: description ? decodeURIComponent(description) : ''
       });
+      setNotificationSource('form');
       
       // Auto-hide notification after 5 seconds
       const timer = setTimeout(() => {
         setNotification(null);
+        setNotificationSource(null);
       }, 5000);
       
       return () => clearTimeout(timer);
@@ -62,108 +128,9 @@ export default function Home() {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentGoals = isDataValid ? data.slice(startIndex, endIndex) : [];
 
-  const handleDelete = useCallback(() => {
-    if (selectedRow === -1 || !data || !currentGoals[selectedRow]) return;
-    
-    const goalId = currentGoals[selectedRow].id;
-    window.location.href = `/goal/delete?id=${goalId}`;
-  }, [selectedRow, data, currentGoals]);
 
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      // Ignore keypress if an input, textarea, select, or content-editable element is focused
-      const activeElement = document.activeElement;
-      if (
-        activeElement.tagName === "INPUT" ||
-        activeElement.tagName === "TEXTAREA" ||
-        activeElement.tagName === "SELECT" ||
-        activeElement.isContentEditable
-      ) {
-        return;
-      }
 
-      if (!data || data.length === 0) return;
 
-      if (event.key === "c") {
-        window.location.href = "/form/create"; // Navigate to create goal page
-      } else if (event.key === "l") {
-        if (isLoggedIn) {
-          logout(); // Log the user out
-        } else {
-          window.location.href = "http://localhost:3001/login"; // Redirect to login page
-        }
-      } else if (
-        (event.key === "Enter" || event.key === "e") &&
-        selectedRow !== -1
-      ) {
-        window.location.href =
-          "http://localhost:3001/goal/edit?id=" + currentGoals[selectedRow].id;
-      } else if (event.key === "ArrowDown" || event.key === "j") {
-        setSelectedRow((prev) => {
-          if (prev === -1) {
-            return 0;
-          }
-          const newRow = prev < currentGoals.length - 1 ? prev + 1 : 0;
-          // If we're at the end of the current page and there's a next page, go to it
-          if (newRow === 0 && currentPage < totalPages - 1) {
-            setCurrentPage(prev => prev + 1);
-          }
-          return newRow;
-        });
-        setHoverText("");
-      } else if (event.key === "ArrowUp" || event.key === "k") {
-        setSelectedRow((prev) => {
-          if (prev === -1) {
-            return currentGoals.length - 1;
-          }
-          const newRow = prev > 0 ? prev - 1 : currentGoals.length - 1;
-          // If we're at the start of the current page and there's a previous page, go to it
-          if (newRow === currentGoals.length - 1 && currentPage > 0) {
-            setCurrentPage(prev => prev - 1);
-          }
-          return newRow;
-        });
-        setHoverText("");
-      } else if (event.key === "ArrowRight" && currentPage < totalPages - 1) {
-        setCurrentPage(prev => prev + 1);
-        setSelectedRow(0);
-      } else if (event.key === "ArrowLeft" && currentPage > 0) {
-        setCurrentPage(prev => prev - 1);
-        setSelectedRow(0);
-      } else if (event.key === "i" && selectedRow !== -1) {
-        setHoverText((prev) => (prev ? "" : currentGoals[selectedRow].description));
-      } else if (event.key === "m") {
-        setShowModal(true);
-      } else if (event.key === "Escape") {
-        setSelectedRow(-1);
-        setHoverText("");
-        setShowModal(false);
-      } else if (event.key === "t" && selectedRow !== -1) {
-        handleDelete();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [data, selectedRow, isLoggedIn, logout, handleDelete, currentPage, currentGoals, totalPages]);
-
-  // Reset selectedRow when currentGoals changes (pagination)
-  useEffect(() => {
-    if (selectedRow >= currentGoals.length) {
-      setSelectedRow(currentGoals.length > 0 ? 0 : -1);
-    }
-  }, [currentGoals, selectedRow]);
-
-  const handleRowHover = (index) => {
-    setSelectedRow(index);
-  };
-
-  const clearState = () => {
-    setHoverText("");
-    setSelectedRow(-1);
-  };
 
   if (isLoading) return <div data-cy="loading">Loading...</div>;
   if (error) return <div data-cy="fetchError">Error: {error.message}</div>;
@@ -192,14 +159,24 @@ export default function Home() {
         >
           <div className="flex justify-between items-start">
             <div>
-              <strong className="font-bold">Goal Added!</strong>
+              <strong className="font-bold">
+                {notificationSource === 'form' ? 'Goal Added!' : 'New Goal Detected!'}
+              </strong>
               <p className="mt-1"><strong>Title:</strong> {notification.title}</p>
               {notification.description && (
                 <p className="mt-1"><strong>Description:</strong> {notification.description}</p>
               )}
+              {notificationSource === 'api' && (
+                <p className="mt-1 text-sm text-blue-600">
+                  Added via API
+                </p>
+              )}
             </div>
             <button 
-              onClick={() => setNotification(null)}
+              onClick={() => {
+                setNotification(null);
+                setNotificationSource(null);
+              }}
               className="ml-4 text-green-700 hover:text-green-900"
               aria-label="Close notification"
             >
@@ -215,11 +192,41 @@ export default function Home() {
           <h1 id="goals-heading" className="sr-only">
             Goals Table
           </h1>
+          
+          {/* Search Bar */}
+          <div className="mb-6 px-4">
+            <div className="max-w-md mx-auto">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search goals..."
+                  value={searchInput}
+                  onChange={handleSearchChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  data-testid="search-input"
+                />
+                {searchInput && (
+                  <button
+                    onClick={clearSearch}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    data-testid="clear-search"
+                    aria-label="Clear search"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              {isSearching && (
+                <p className="text-sm text-gray-600 mt-2">
+                  Searching for: "{searchInput}"
+                </p>
+              )}
+            </div>
+          </div>
           <table
             className="table-width"
             role="grid"
             aria-label="Goals Table"
-            aria-describedby="keyboard-shortcuts"
           >
             <thead>
               <tr>
@@ -228,15 +235,12 @@ export default function Home() {
                 <th scope="col">Days Left</th>
               </tr>
             </thead>
-            <tbody id="goals-rows" data-testid="goals" onMouseLeave={() => clearState()}>
+            <tbody id="goals-rows" data-testid="goals">
               {currentGoals.length > 0 ? (
                 currentGoals.map((goal, index) => (
                   <tr
                     key={goal.id}
                     role="row"
-                    className={selectedRow === index ? "highlight" : ""}
-                    onMouseEnter={() => handleRowHover(index)}
-                    aria-selected={selectedRow === index}
                   >
                     <td role="gridcell" className="break-word fixed-width-600">
                       <a
@@ -263,70 +267,32 @@ export default function Home() {
               ) : (
                 <tr>
                   <td colSpan="3" className="text-center text-gray-500 py-8">
-                    No goals found
+                    {isSearching ? `No goals found matching "${searchInput}"` : "No goals found"}
                   </td>
                 </tr>
               )}
             </tbody>
             <tfoot>
               <tr>
-                <td className="info-box" colSpan="4" id="keyboard-shortcuts">
-                  <p>
-                    <kbd>j</kbd>/<kbd>↓</kbd> down <br />
-                    <kbd>k</kbd>/<kbd>↑</kbd> up <br />
-                    <kbd>←</kbd>/<kbd>→</kbd> previous/next page <br />
-                    <kbd>i</kbd> info <br />
-                    <kbd>e</kbd> edit <br />
-                    <kbd>t</kbd> trash <br />
-                    <kbd>l</kbd> login/logout <br />
-                    <kbd>esc</kbd> cancel <br />
-                  </p>
+                <td className="info-box" colSpan="3">
                   <p className="mt-2">
                     Page {currentPage + 1} of {totalPages}
+                    {isSearching && (
+                      <span className="ml-2 text-blue-600">
+                        (Search: "{searchInput}")
+                      </span>
+                    )}
                   </p>
                 </td>
               </tr>
             </tfoot>
           </table>
-          {hoverText && (
-            <div
-              className="hover-text show-hover-text"
-              role="tooltip"
-              aria-live="polite"
-            >
-              {hoverText}
-            </div>
-          )}
         </section>
       </main>
 
       {/* Todos Component */}
       <Todos />
 
-      {/* Modal */}
-      {showModal && (
-        <div
-          className="modal-overlay"
-          role="dialog"
-          aria-labelledby="modal-header"
-          aria-describedby="modal-body"
-        >
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3 id="modal-header">Header</h3>
-              <button
-                onClick={() => setShowModal(false)}
-                aria-label="Close modal"
-              >
-                ×
-              </button>
-            </div>
-            <div className="modal-body" id="modal-body">
-              <p>Hi</p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

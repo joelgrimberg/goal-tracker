@@ -16,18 +16,36 @@ dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
 const server: Hapi.Server = Hapi.server({
   port: process.env.PORT || 3000,
   host: process.env.HOST || "localhost",
-  routes: {
-    cors: {
-      origin: ["http://localhost:3001"],
-      credentials: true,
-    },
-  },
 });
 
 export async function start(): Promise<Hapi.Server> {
   // Register all plugins, including the auth plugin
-  await server.register([prisma, users, goals, auth, oauth]);
+  // Register goals BEFORE auth to ensure it doesn't get intercepted
+  await server.register([prisma, goals, users, auth, oauth]);
   await server.register(Inert);
+
+  // Add CORS headers to all responses
+  server.ext('onPreResponse', (request, h) => {
+    const response = request.response;
+    if (response && 'header' in response && typeof response.header === 'function') {
+      response.header('Access-Control-Allow-Origin', 'http://localhost:3001');
+      response.header('Access-Control-Allow-Credentials', 'true');
+    }
+    return h.continue;
+  });
+
+  // Add CORS preflight handler for all routes
+  server.route({
+    method: 'OPTIONS',
+    path: '/{any*}',
+    handler: (request, h) => {
+      return h.response().code(204)
+        .header('Access-Control-Allow-Origin', 'http://localhost:3001')
+        .header('Access-Control-Allow-Credentials', 'true')
+        .header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        .header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    }
+  });
 
   server.route({
     method: "GET",
