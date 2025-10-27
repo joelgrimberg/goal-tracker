@@ -275,14 +275,38 @@ export default function Home() {
             <tfoot>
               <tr>
                 <td className="info-box" colSpan="3">
-                  <p className="mt-2">
-                    Page {currentPage + 1} of {totalPages}
-                    {isSearching && (
-                      <span className="ml-2 text-blue-600">
-                        (Search: "{searchInput}")
-                      </span>
-                    )}
-                  </p>
+                  <div className="flex justify-between items-center mt-2">
+                    <div>
+                      <p>
+                        Page {currentPage + 1} of {totalPages}
+                        {isSearching && (
+                          <span className="ml-2 text-blue-600">
+                            (Search: "{searchInput}")
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+                        disabled={currentPage === 0}
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                        data-testid="prev-page-button"
+                        aria-label="Previous page"
+                      >
+                        Previous
+                      </button>
+                      <button
+                        onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
+                        disabled={currentPage >= totalPages - 1}
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                        data-testid="next-page-button"
+                        aria-label="Next page"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
                 </td>
               </tr>
             </tfoot>
